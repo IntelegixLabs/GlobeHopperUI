@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  app:
+    build:
+      context: "../../../GlobeHopperUI"
+      dockerfile: "docker/globehopper/Dockerfile"
+    volumes:
+      - ../../../GlobeHopperUI:/core
+    ports:
+      - 3000:3000
+    image: globehopper_react:react
+    container_name: globehopper_react
+    command: npm start
