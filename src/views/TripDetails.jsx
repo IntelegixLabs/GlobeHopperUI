@@ -1,175 +1,57 @@
 import React, { Fragment, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
+import { Api } from "@api/Api.js";
+
+import { sampleWeatherData } from "../samples/sampleData.js";
+import { samplePhotosData } from "../samples/sampleData.js";
 
 export default function PlanTripDetails() {
   const { tripDetails, destination } = useContext(TripDetailsContext);
 
-  const [showResult, setShowResult] = useState(false);
-  const [imageSrc, setImageSrc] = useState("");
+  const [Photos, setPhotos] = useState([]);
 
-  const sampleWeatherData = {
-    current_observation: {
-      astronomy: {
-        sunrise: "6:00 AM",
-        sunset: "4:51 PM",
-      },
-      atmosphere: {
-        humidity: 86,
-        pressure: 1014.2,
-        visibility: 7.02,
-      },
-      condition: {
-        code: 21,
-        temperature: 69,
-        text: "Haze",
-      },
-      pubDate: 1701390331,
-      wind: {
-        chill: 70,
-        direction: "NNE",
-        speed: 2,
-      },
-    },
-    forecasts: [
-      {
-        code: 30,
-        date: 1701446400,
-        day: "Fri",
-        high: 87,
-        low: 69,
-        text: "Partly Cloudy",
-      },
-      {
-        code: 28,
-        date: 1701532800,
-        day: "Sat",
-        high: 88,
-        low: 69,
-        text: "Mostly Cloudy",
-      },
-      {
-        code: 21,
-        date: 1701619200,
-        day: "Sun",
-        high: 87,
-        low: 68,
-        text: "Haze",
-      },
-      {
-        code: 21,
-        date: 1701705600,
-        day: "Mon",
-        high: 85,
-        low: 70,
-        text: "Haze",
-      },
-      {
-        code: 21,
-        date: 1701792000,
-        day: "Tue",
-        high: 82,
-        low: 67,
-        text: "Haze",
-      },
-      {
-        code: 11,
-        date: 1701878400,
-        day: "Wed",
-        high: 80,
-        low: 69,
-        text: "Showers",
-      },
-      {
-        code: 12,
-        date: 1701964800,
-        day: "Thu",
-        high: 76,
-        low: 66,
-        text: "Rain",
-      },
-      {
-        code: 30,
-        date: 1702051200,
-        day: "Fri",
-        high: 82,
-        low: 68,
-        text: "Partly Cloudy",
-      },
-      {
-        code: 32,
-        date: 1702137600,
-        day: "Sat",
-        high: 86,
-        low: 71,
-        text: "Sunny",
-      },
-      {
-        code: 32,
-        date: 1702224000,
-        day: "Sun",
-        high: 84,
-        low: 62,
-        text: "Sunny",
-      },
-      {
-        code: 32,
-        date: 1702310400,
-        day: "Mon",
-        high: 84,
-        low: 64,
-        text: "Sunny",
-      },
-    ],
-    location: {
-      city: "Kolkata",
-      country: "India",
-      lat: 22.54994,
-      long: 88.371582,
-      timezone_id: "Asia/Kolkata",
-      woeid: 2295386,
-    },
+  const fetchPhotos = async () => {
+    /*
+    | - Use it for live in
+    | - Note: API limits will exhaust
+    | =====================================
+    */
+    // const payload = {
+    //   parameters: {
+    //     location: destination,
+    //     query_count: 6,
+    //   },
+    // };
+
+    // await Api.post('/images', payload).then(res => {
+    //   setPhotos(res.data);
+    // });
+
+    // =======================================
+
+    /* Use it for testing with sample
+    | static in order to avoid
+    | getting API limits exhausted
+    | =========================================
+    */
+    await setPhotos(samplePhotosData.photos);
   };
 
-  const sampleImageData = [
-    {
-      alt: "White Building",
-      avg_color: "#8EA097",
-      height: "4000",
-      id: 2846217,
-      liked: false,
-      photographer: "Rahul Pandit",
-      photographer_id: 340699,
-      photographer_url: "https://www.pexels.com/@rahulp9800",
-      src: {
-        landscape:
-          "https://images.pexels.com/photos/2846217/pexels-photo-2846217.jpeg",
-        medium:
-          "https://images.pexels.com/photos/2846217/pexels-photo-2846217.jpeg?auto=compress&cs=tinysrgb&h=350",
-        original:
-          "https://images.pexels.com/photos/2846217/pexels-photo-2846217.jpeg",
-      },
-      url: "https://www.pexels.com/photo/white-building-2846217/",
-      width: 6000,
-    },
-  ];
-
   useEffect(() => {
-    if (!destination) {
-      setShowResult(false);
-    }
-
-    setImageSrc(sampleImageData[0].src.original);
-  }, []);
+    fetchPhotos();
+  }, [Photos]);
 
   return (
     <div className="w-full bg-gray-100">
       <div className="relative w-full h-[800px]">
-        <img
-          className="absolute object-cover w-full h-[800px]"
-          src={imageSrc}
-          alt="cover-image"
-        />
+        {Photos.length && (
+          <img
+            className="absolute object-cover w-full h-[800px]"
+            src={Photos[0].src.original}
+            alt="cover-image"
+          />
+        )}
         <div className="absolute py-10 px-12 right-0 w-1/2 bg-white/70 backdrop-blur-sm shadow-lg h-full">
           <h2 className="mt-20 font-bold text-5xl text-gray-800">
             {destination}
@@ -186,8 +68,8 @@ export default function PlanTripDetails() {
         </div>
       </div>
 
-      <div className="mt-10 mb-10 max-w-2xl mx-auto">
-        <div className="flex items-start justify-between gap-4">
+      <div className="mt-10 mb-10 max-w-7xl mx-auto">
+        <div className="w-full flex items-start justify-between gap-4">
           <h2 className="font-bold text-5xl">Trip Plan</h2>
           <a
             href="#destination-map"
@@ -207,26 +89,93 @@ export default function PlanTripDetails() {
           days.
         </p>
 
-        <div className="mt-10 grid grid-cols-1 gap-10">
-          {tripDetails.itinerary.map((itinerary, index) => {
-            return (
-              <div
-                className="pt-6 pb-10 px-10 border bg-white shadow-lg rounded-lg"
-                key={index}
-              >
-                <h4 className="font-bold text-3xl">Day {itinerary.Day}</h4>
+        <div className="mt-10 flex gap-10">
+          <div className="w-1/2">
+            {Photos.length && (
+              <div className="relative group">
+                <div className="absolute z-20 bg-gradient-to-t from-black/80 min-h-full w-full rounded-lg hidden group-hover:block">
+                  <div className="absolute bottom-0 p-4">
+                    <a
+                      href={Photos[0].photographer_url}
+                      target="_blank"
+                      className="font-medium text-gray-200 hover:text-white hover:underline"
+                    >
+                      {Photos[0].photographer}
+                      <i className="fa-solid fa-camera fa-fw fa-md text-white ml-2"></i>
+                    </a>
 
-                <h6 className="mt-8 text-xl">Morning</h6>
-                <p className="mt-2 text-gray-600">{itinerary.morning}</p>
-                <h6 className="mt-6 text-xl">Afternoon</h6>
-                <p className="mt-2 text-gray-600">{itinerary.afternoon}</p>
-                <h6 className="mt-6 text-xl">Evening</h6>
-                <p className="mt-2 text-gray-600">{itinerary.evening}</p>
-                <h6 className="mt-6 text-xl">Night</h6>
-                <p className="mt-2 text-gray-600">{itinerary.night}</p>
+                    <p className="mt-1 text-gray-300">{Photos[0].alt}</p>
+                  </div>
+                </div>
+                <img
+                  className="w-full object-cover h-[280px] rounded-lg"
+                  src={Photos[0].src.original}
+                  alt="cover-image"
+                />
               </div>
-            );
-          })}
+            )}
+            <div className="mt-10 grid grid-cols-2 gap-6">
+              {Photos.length && (
+                <Fragment>
+                  {Photos.map((photo, index) => {
+                    if (index === 0) {
+                      return;
+                    }
+
+                    return (
+                      <div
+                        className="relative shadow-md rounded-lg group"
+                        key={index}
+                      >
+                        <div className="absolute z-20 bg-gradient-to-t from-black/80 min-h-full w-full rounded-lg hidden group-hover:block">
+                          <div className="absolute bottom-0 p-4">
+                            <a
+                              href={photo.photographer_url}
+                              target="_blank"
+                              className="font-medium text-gray-200 hover:text-white hover:underline"
+                            >
+                              {photo.photographer}
+                              <i className="fa-solid fa-camera fa-fw fa-md text-white ml-2"></i>
+                            </a>
+
+                            <p className="mt-1 text-gray-300">{photo.alt}</p>
+                          </div>
+                        </div>
+                        <img
+                          className="w-full object-cover h-[256px] rounded-lg"
+                          src={photo.src.original}
+                          alt={photo.alt}
+                        />
+                      </div>
+                    );
+                  })}
+                </Fragment>
+              )}
+            </div>
+          </div>
+          <div className="w-1/2">
+            <div className="grid grid-cols-1 gap-10">
+              {tripDetails.itinerary.map((itinerary, index) => {
+                return (
+                  <div
+                    className="pt-6 pb-10 px-10 border bg-white shadow-lg rounded-lg"
+                    key={index}
+                  >
+                    <h4 className="font-bold text-3xl">Day {itinerary.Day}</h4>
+
+                    <h6 className="mt-8 text-xl">Morning</h6>
+                    <p className="mt-2 text-gray-600">{itinerary.morning}</p>
+                    <h6 className="mt-6 text-xl">Afternoon</h6>
+                    <p className="mt-2 text-gray-600">{itinerary.afternoon}</p>
+                    <h6 className="mt-6 text-xl">Evening</h6>
+                    <p className="mt-2 text-gray-600">{itinerary.evening}</p>
+                    <h6 className="mt-6 text-xl">Night</h6>
+                    <p className="mt-2 text-gray-600">{itinerary.night}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </div>
 
