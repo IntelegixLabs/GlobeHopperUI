@@ -16,17 +16,15 @@ export default defineConfig({
     alias: {
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
-      "@components": fileURLToPath(
-        new URL("./src/components", import.meta.url)
-      ),
+      "@components": fileURLToPath(new URL("./src/components", import.meta.url)),
       "@layouts": fileURLToPath(new URL("./src/layouts", import.meta.url)),
       "@views": fileURLToPath(new URL("./src/views", import.meta.url)),
       "@contexts": fileURLToPath(new URL("./src/contexts", import.meta.url)),
       "@api": fileURLToPath(new URL("./src/api", import.meta.url)),
     },
   },
-  esbuild: {
-    loader: { ".js": "jsx" },
+    esbuild: {
+    loader: "jsx",
     include: [
       // Business as usual for .jsx and .tsx files
       "src/**/*.jsx",
