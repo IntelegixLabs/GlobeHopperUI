@@ -16,7 +16,7 @@ import HAZE from "@assets/weather-icons/haze.png";
 import WIND from "@assets/weather-icons/wind.png";
 
 export default function PlanTripDetails() {
-  const { tripDetails, destination } = useContext(TripDetailsContext);
+  const { destinationDetails, destination } = useContext(TripDetailsContext);
 
   const [Photos, setPhotos] = useState([]);
   const [Weather, setWeather] = useState({});
@@ -206,7 +206,7 @@ export default function PlanTripDetails() {
             {destination}
           </h2>
           <p className="mt-4 text-base md:text-lg lg:text-xl text-gray-700">
-            {tripDetails.introduction}
+            {destinationDetails.introduction}
           </p>
         </div>
       </div>
