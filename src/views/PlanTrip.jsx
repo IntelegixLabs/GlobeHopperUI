@@ -5,6 +5,7 @@ import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 
 import { Api } from "@api/Api.js";
 import RandomTextLoading from "./RandomTextLoading";
+import { cohereResponse } from "../samples/sampleData";
 
 export default function PlanTrip() {
   const navigate = useNavigate();
@@ -26,38 +27,46 @@ export default function PlanTrip() {
   const generateTripPlan = async () => {
     setIsLoading(true);
 
-    let startingDate = rearrangeDate(startDate);
-    let endingDate = rearrangeDate(endDate);
+    if (import.meta.env.VITE_APP_ENVIRONMENT === "production") {
+      let startingDate = rearrangeDate(startDate);
+      let endingDate = rearrangeDate(endDate);
 
-    const payload = {
-      parameters: {
-        source: source,
-        destination: destination,
-        start_date: startingDate,
-        end_date: endingDate,
-      },
-    };
+      const payload = {
+        parameters: {
+          source: source,
+          destination: destination,
+          start_date: startingDate,
+          end_date: endingDate,
+        },
+      };
 
-    let data = {};
+      let data = {};
 
-    console.log("Type of Data:", typeof data);
+      do {
+        data = {};
+        await Api.post("/travel_planner", payload)
+          .then((res) => {
+            data = res.data;
+            setTripDetails(data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
-    do {
-      data = {};
-      await Api.post("/travel_planner", payload)
-        .then((res) => {
-          data = res.data;
-          setTripDetails(data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+        if (typeof data === "object") {
+          setIsLoading(false);
+          navigate("/trip-details");
+        }
+      } while (typeof data === "string");
 
-      if (typeof data === "object") {
-        setIsLoading(false);
-        navigate("/trip-details");
-      }
-    } while (typeof data === "string");
+      return;
+    }
+
+    setTimeout(() => {
+      setTripDetails(cohereResponse);
+      setIsLoading(false);
+      navigate("/trip-details");
+    }, 6000);
   };
 
   return (
@@ -147,7 +156,7 @@ export default function PlanTrip() {
                 Generate Trip Plan
               </Fragment>
             ) : (
-                <RandomTextLoading />
+              <RandomTextLoading />
             )}
           </button>
         </div>
