@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 
 import { cohereResponse } from "../samples/sampleData.js";
+import { Api } from "@api/Api.js";
 
 export default function Home() {
 
