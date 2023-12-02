@@ -1,3 +1,65 @@
+export const cohereResponse = {
+  introduction:
+    "Goa, a tropical paradise on India's western coast, is renowned for its stunning beaches, vibrant culture, and historical significance. From exploring centuries-old churches to enjoying vibrant parties and relishing delicious seafood, Goa promises an unforgettable experience.",
+  itinerary: [
+    {
+      Day: "1",
+      afternoon:
+        "Head to the historic Panjim City and visit the iconic Our Lady of the Immaculate Conception Church, which dates back to the 17th century. Explore the old town, grab a flavorful lunch at a local restaurant serving Goan specialties like Xacuti or Vindaloo. ",
+      evening:
+        "In the evening, opt for a boat ride along the Mondovi River, enjoy the beautiful coastline, and witness vibrant beach shacks and sparkling sand. You can also visit the lively Calangute or Baga beaches for water sports and snorkeling. Return to the hotel for a quick rest before dinner.",
+      morning:
+        "Start your day at one of the many charming cafes offering breakfast options like eggs, toast, and fresh juice. Get ready for a action-packed day ahead! ",
+      night:
+        "As the sun sets, indulge in a seafood extravaganza at one of the many beach-side restaurants. Try the local special Goan Fish Curry and end your day on a delicious note.",
+    },
+    {
+      Day: "2",
+      afternoon:
+        "Have lunch at one of the beach shacks serving a variety of cuisines ranging from Indian to Continental. After refueling, visit the nearby Cola Beach, which is relatively less crowded and known for its serene beauty.",
+      evening:
+        "In the evening, visit the Friday Market in Mapusa, where you can find everything from fresh produce to local handicrafts and souvenirs. Enjoy the vibrant atmosphere and interact with friendly locals.",
+      morning:
+        "After a tasty breakfast, head to the eastern part of Goa and visit the beautiful Palolem Beach, which is an idyllic spot for relaxing and soaking up the sun. Enjoy a leisurely swim or take a stroll along the crescent-shaped coastline.",
+      night:
+        "For dinner, head to one of the high-end restaurants in North Goa's nightlife hub of Candolim or Calangute. Choose from a variety of international dishes and end your day with a lively atmosphere.",
+    },
+    {
+      Day: "3",
+      afternoon:
+        "Head to a serene spot for a relaxed lunch at one of the local eateries in Old Goa. Enjoy authentic Goan specialties before you proceed to your next destination.",
+      evening:
+        "In the evening, visit the Se Cathedral, which is dedicated to Saint Catherine of Alexandria. Marvel at the architecture and enjoy the peaceful atmosphere before heading back to your hotel.",
+      morning:
+        "After breakfast, take a trip to the UNESCO World Heritage site of Old Goa, which showcases the historical influence of the Portuguese. Visit the Basilica of Bom Jesus, which houses the relics of St. Francis Xavier.",
+      night:
+        "For dinner, check out one of the outstanding seafood restaurants at Fort Aguada, offering beautiful views of the Arabian Sea and a selection of the finest seafood dishes.",
+    },
+    {
+      Day: "4",
+      afternoon:
+        "After exploring the wildlife, head to a nearby restaurant inside the sanctuary for a lunch surrounded by nature's beauty.",
+      evening:
+        "In the evening, visit the Ancestral Goa Museum in Loutolim, which showcases the traditional art and culture of the region. Get a glimpse of Portuguese-influenced architecture and rustic charm.",
+      morning:
+        "This morning, explore the magical world of the Bondosa Wildlife Sanctuary, which is home to a variety of exotic wildlife species and lush greenery. Enjoy a nature walk or a jeep safari.",
+      night:
+        "For dinner, visit one of the family-run restaurants in the area serving authentic Goan specialties.",
+    },
+    {
+      Day: "5",
+      afternoon:
+        "Enjoy a leisurely lunch at one of the beach shacks offering fresh seafood and refreshing drinks.",
+      evening:
+        "In the evening, visit the Sunset Bar at the Leela Hotel for a decadent cocktail as you watch the sunset over the glimmering waters of the Arabian Sea.",
+      morning:
+        "After a relaxing breakfast, take a walk along the beaches of South Goa, which are relatively less crowded and offer serene landscapes.",
+      night:
+        "For dinner, head to the vibrant lanes of Goa's capital, Panjim, and explore the restaurant and bar scene in the area.",
+    },
+  ],
+};
+
 export const sampleWeatherData = {
   current_observation: {
     astronomy: {

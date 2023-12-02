@@ -1,14 +1,20 @@
 import { Fragment, useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 
+import { cohereResponse } from "../samples/sampleData.js";
+
 export default function Home() {
-  const { destination, setDestination } = useContext(TripDetailsContext);
+
+  const navigate = useNavigate();
+
+  const { destination, setDestination, setDestinationDetails } =
+    useContext(TripDetailsContext);
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const searchPlace = () => {
+  const searchPlace = async () => {
     if (
       destination === "" ||
       destination === "undefined" ||
@@ -17,23 +23,42 @@ export default function Home() {
       return;
     }
 
-    const payload = {
-      parameters: {
-        destination: destination,
-      },
-    };
+    setIsLoading(true);
 
-    Api.post("/travel_planner", payload)
-      .then((res) => {
-        let data = res.data;
+    let data = {};
 
-        setTripDetails(res.data);
-        setIsLoading(false);
-        navigate("/destination-details");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    if (import.meta.env.VITE_APP_ENVIRONMENT === "production") {
+      const payload = {
+        parameters: {
+          destination: destination,
+        },
+      };
+
+      do {
+        data = {};
+        await Api.post("/travel_planner", payload)
+          .then((res) => {
+            data = res.data;
+            setDestinationDetails(data);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+
+        if (typeof data === "object") {
+          setIsLoading(false);
+          navigate("/destination-details");
+        }
+      } while (typeof data === "string");
+
+      return;
+    }
+
+    setTimeout(() => {
+      setDestinationDetails(cohereResponse);
+      setIsLoading(false);
+      navigate("/destination-details");
+    }, 3000);
   };
 
   return (
