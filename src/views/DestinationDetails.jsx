@@ -15,6 +15,9 @@ import RAIN from "@assets/weather-icons/rain.png";
 import HAZE from "@assets/weather-icons/haze.png";
 import WIND from "@assets/weather-icons/wind.png";
 
+import HOTEL from "@assets/convenience/hotel-room-1.jpg";
+import FLIGHT from "@assets/convenience/flight-1.jpg";
+
 export default function PlanTripDetails() {
   const { destinationDetails, destination } = useContext(TripDetailsContext);
 
@@ -124,8 +127,8 @@ export default function PlanTripDetails() {
         )}
 
         {Weather && Weather.forecasts && Weather.forecasts.length && (
-          <div className="absolute top-32 left-[25%] w-1/2">
-            <div className="grid grid-cols-4 gap-4">
+          <div className="absolute top-32 left-[0%] w-full px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {Weather.forecasts.map((forecast, index) => {
                 return (
                   <div
@@ -200,19 +203,16 @@ export default function PlanTripDetails() {
             </div>
           </div>
         )}
-
-        <div className="absolute top-[72%] left-[25%] py-10 px-6 lg:px-12 w-full lg:w-1/2 bg-white/70 backdrop-blur-lg rounded-lg">
-          <h2 className="font-bold text-4xl lg:text-5xl text-center text-gray-800">
-            {destination}
-          </h2>
-          <p className="mt-4 text-base md:text-lg lg:text-xl text-gray-700">
-            {destinationDetails.introduction}
-          </p>
-        </div>
       </div>
 
-      <div className="mt-10 mb-10 max-w-7xl mx-auto px-4">
-        <div className="flex justify-center">
+      <div className="mt-[700px] md:mt-28 mb-10 max-w-7xl mx-auto px-4">
+        <h2 className="font-bold text-4xl lg:text-5xl text-center text-gray-800">
+          {destination}
+        </h2>
+        <p className="mt-4 text-base md:text-lg lg:text-xl text-gray-700">
+          {destinationDetails.introduction}
+        </p>
+        <div className="mt-10 flex justify-center">
           <a
             href="#destination-map"
             className="py-2 pl-3 pr-4 text-blue-500 hover:text-blue-700 border border-blue-100 bg-blue-50 hover:bg-blue-100 shadow-sm hover:shadow rounded-md duration-300"
@@ -288,6 +288,65 @@ export default function PlanTripDetails() {
                 </Fragment>
               )}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="my-20 max-w-7xl mx-auto">
+        <h4 className="font-bold text-3xl">
+          Convenience at your fingertips with{" "}
+          <a
+            className="text-blue-600 hover:underline"
+            href="https://www.tbo.com/"
+          >
+            TBO.com
+          </a>
+        </h4>
+        <div className="mt-4 flex gap-4">
+          <div className="w-1/2 p-2 border bg-white shadow-lg rounded-lg">
+            <img
+              className="w-full object-cover h-[260px]"
+              src={HOTEL}
+              alt="hotels"
+            />
+            <p className="mt-4 text-lg">
+              Seamless hotel bookings made easy. Your comfort, your choice.
+            </p>
+            <p className="text-lg">
+              With{" "}
+              <a
+                className="text-blue-700"
+                href="https://tbo.com"
+                target="_blank"
+              >
+                TBO.com
+              </a>
+              , your hotel bookings are taken care of.
+            </p>
+            <p className="mt-4 text-blue-500">#BookWithEase, #BookWithTBO</p>
+          </div>
+          <div className="w-1/2 p-2 border bg-white shadow-lg rounded-lg">
+            <img
+              className="w-full object-cover h-[260px]"
+              src={FLIGHT}
+              alt="flights"
+            />
+            <p className="mt-4 text-lg">
+              Fly hassle-free with our easy booking platform. Your journey, your
+              way..
+            </p>
+            <p className="text-lg">
+              With{" "}
+              <a
+                className="text-blue-700"
+                href="https://tbo.com"
+                target="_blank"
+              >
+                TBO.com
+              </a>
+              , everything just happens without you have to worry about it.
+            </p>
+            <p className="mt-4 text-blue-500">#FlyWithEase, #BookWithTBO</p>
           </div>
         </div>
       </div>

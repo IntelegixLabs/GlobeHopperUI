@@ -15,6 +15,9 @@ import RAIN from "@assets/weather-icons/rain.png";
 import HAZE from "@assets/weather-icons/haze.png";
 import WIND from "@assets/weather-icons/wind.png";
 
+import HOTEL from "@assets/convenience/hotel-room-1.jpg";
+import FLIGHT from "@assets/convenience/flight-1.jpg";
+
 export default function PlanTripDetails() {
   const { tripDetails, destination } = useContext(TripDetailsContext);
 
@@ -131,7 +134,109 @@ export default function PlanTripDetails() {
           <p className="mt-4 text-base md:text-lg lg:text-xl text-gray-700">
             {tripDetails.introduction}
           </p>
-          <div className="absolute bottom-20 text-gray-600">
+
+          {Weather && Weather.forecasts && Weather.forecasts.length && (
+            <div className="max-w-7xl mx-auto">
+              <h6 className="mt-10 font-bold text-lg text-gray-800">
+                Next 5 days forecast
+              </h6>
+              <div className="mt-4 grid grid-cols-5 gap-4">
+                {Weather.forecasts.map((forecast, index) => {
+                  if (index > 4) {
+                    return;
+                  }
+
+                  return (
+                    <div
+                      className="w-full p-4 border bg-white/60 rounded-lg"
+                      key={index}
+                    >
+                      {forecast.text === "Sunny" && (
+                        <img
+                          className="w-12 mx-auto"
+                          src={SUNNY}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text === "Showers" && (
+                        <img
+                          className="w-12 mx-auto"
+                          src={SHOWERS}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text === "Partly Cloudy" && (
+                        <img
+                          className="w-12 mx-auto"
+                          src={PARTLY_CLOUDY}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text === "Mostly Cloudy" && (
+                        <img
+                          className="w-12 mx-auto"
+                          src={CLOUDY}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text === "Haze" && (
+                        <img
+                          className="w-12 mb-2 mx-auto"
+                          src={HAZE}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text === "Rain" && (
+                        <img
+                          className="w-12 mx-auto"
+                          src={RAIN}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text === "Storm" && (
+                        <img
+                          className="w-12 mx-auto"
+                          src={STORM}
+                          alt={forecast.text}
+                        />
+                      )}
+                      {forecast.text !== "Sunny" &&
+                        forecast.text !== "Showers" &&
+                        forecast.text !== "Partly Cloudy" &&
+                        forecast.text !== "Mostly Cloudy" &&
+                        forecast.text !== "Haze" &&
+                        forecast.text !== "Rain" &&
+                        forecast.text !== "Storm" && (
+                          <img
+                            className="w-12 mx-auto"
+                            src={WIND}
+                            alt={forecast.text}
+                          />
+                        )}
+                      <div className="mt-2 text-center">
+                        <h6 className="font-semibold text-gray-400">
+                          {forecast.day}
+                        </h6>
+                        <h6 className="font-semibold">{forecast.text}</h6>
+                        <p className="mt-1 text-gray-600 text-sm">
+                          {parseFloat(
+                            (((forecast.high - 32) * 5) / 9).toFixed(1)
+                          )}
+                          &deg; C &nbsp; | &nbsp;
+                          {parseFloat(
+                            (((forecast.low - 32) * 5) / 9).toFixed(1)
+                          )}
+                          &deg; C
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="absolute bottom-10 text-gray-600">
             <p>
               Scroll down <br /> to see more <br />{" "}
             </p>
@@ -254,6 +359,60 @@ export default function PlanTripDetails() {
                 );
               })}
             </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="my-20 max-w-7xl mx-auto">
+        <h4 className="font-bold text-3xl">
+          Convenience at your fingertips with{" "}
+          <a className="text-blue-600 hover:underline" href="https://www.tbo.com/">TBO.com</a>
+        </h4>
+        <div className="mt-4 flex gap-4">
+          <div className="w-1/2 p-2 border bg-white shadow-lg rounded-lg">
+            <img
+              className="w-full object-cover h-[260px]"
+              src={HOTEL}
+              alt="hotels"
+            />
+            <p className="mt-4 text-lg">
+              Seamless hotel bookings made easy. Your comfort, your choice.
+            </p>
+            <p className="text-lg">
+              With{" "}
+              <a
+                className="text-blue-700"
+                href="https://tbo.com"
+                target="_blank"
+              >
+                TBO.com
+              </a>
+              , your hotel bookings are taken care of.
+            </p>
+            <p className="mt-4 text-blue-500">#BookWithEase, #BookWithTBO</p>
+          </div>
+          <div className="w-1/2 p-2 border bg-white shadow-lg rounded-lg">
+            <img
+              className="w-full object-cover h-[260px]"
+              src={FLIGHT}
+              alt="flights"
+            />
+            <p className="mt-4 text-lg">
+              Fly hassle-free with our easy booking platform. Your journey, your
+              way..
+            </p>
+            <p className="text-lg">
+              With{" "}
+              <a
+                className="text-blue-700"
+                href="https://tbo.com"
+                target="_blank"
+              >
+                TBO.com
+              </a>
+              , everything just happens without you have to worry about it.
+            </p>
+            <p className="mt-4 text-blue-500">#FlyWithEase, #BookWithTBO</p>
           </div>
         </div>
       </div>
