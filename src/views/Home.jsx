@@ -77,6 +77,7 @@ export default function Home() {
           onKeyDown={(event) => {
             if (event.key === "Enter") searchPlace();
           }}
+          disabled={isLoading}
         />
         {isLoading ? (
           <div className="p-2 rounded-full">
