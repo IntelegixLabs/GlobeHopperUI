@@ -359,8 +359,10 @@ export default function PlanTripDetails() {
           loading="lazy"
           allowFullScreen
           referrerPolicy="no-referrer-when-downgrade"
-          src={`https://www.google.com/maps/embed/v1/place?key=AIzaSyA6DpkaU7wgt0BOgkE6IkjhZUOTNET__Ls
-    &q=${destination}`}
+          src={`https://www.google.com/maps/embed/v1/directions?key=AIzaSyA6DpkaU7wgt0BOgkE6IkjhZUOTNET__Ls
+          &origin=India
+          &destination=${destination}
+          &avoid=tolls|highways`}
         ></iframe>
       </div>
       <div className="py-10 text-gray-700">
