@@ -347,13 +347,13 @@ export default function PlanTripDetails() {
                   >
                     <h4 className="font-bold text-3xl">Day {itinerary.Day}</h4>
 
-                    <h6 className="mt-8 text-xl">Morning</h6>
+                    <h6 className="mt-8 text-xl">Morning <i class="fa-solid fa-mug-saucer"></i></h6>
                     <p className="mt-2 text-gray-600">{itinerary.morning}</p>
-                    <h6 className="mt-6 text-xl">Afternoon</h6>
+                    <h6 className="mt-6 text-xl">Afternoon <i class="fa-solid fa-sun"></i></h6>
                     <p className="mt-2 text-gray-600">{itinerary.afternoon}</p>
-                    <h6 className="mt-6 text-xl">Evening</h6>
+                    <h6 className="mt-6 text-xl">Evening <i class="fa-solid fa-cloud-moon-rain"></i></h6>
                     <p className="mt-2 text-gray-600">{itinerary.evening}</p>
-                    <h6 className="mt-6 text-xl">Night</h6>
+                    <h6 className="mt-6 text-xl">Night <i class="fa-solid fa-moon"></i></h6>
                     <p className="mt-2 text-gray-600">{itinerary.night}</p>
                   </div>
                 );
