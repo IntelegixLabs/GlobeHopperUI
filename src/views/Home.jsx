@@ -34,6 +34,7 @@ export default function Home() {
       return;
     }
 
+    setUserSelectedDestinations([]);
     setIsLoading(true);
 
     let data = {};
