@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Home from "@views/Home.jsx";
+import HomePlanTrips from "@views/HomePlanTrips.jsx";
 import TBO from "@views/TBO.jsx";
 import DestinationSearch from "@views/DestinationSearch.jsx";
 import About from "@views/About.jsx";
@@ -22,6 +23,11 @@ const router = createBrowserRouter([
         path: "/",
         name: "Home",
         element: <Home />,
+      },
+      {
+        path: "/home-plan-trips",
+        name: "HomePlanTrips",
+        element: <HomePlanTrips />,
       },
       {
         path: "/tbo",

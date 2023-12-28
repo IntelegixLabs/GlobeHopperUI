@@ -9,7 +9,6 @@ export default function GuestLayout() {
   const [destination, setDestination] = useState('');
   const [userDestinationQuery, setUserDestinationQuery] = useState('');
   const [userSelectedDestinations, setUserSelectedDestinations] = useState([]);
-  const [userSelectedDestinationsDetails, setUserSelectedDestinationsDetails] = useState(null);
   const [tripDetails, setTripDetails] = useState({});
   const [destinationDetails, setDestinationDetails] = useState({});
 
@@ -24,7 +23,6 @@ export default function GuestLayout() {
         destinationDetails,
         userDestinationQuery,
         userSelectedDestinations,
-        userSelectedDestinationsDetails,
         setCountry,
         setCity,
         setHotel,
@@ -33,7 +31,6 @@ export default function GuestLayout() {
         setDestinationDetails,
         setUserDestinationQuery,
         setUserSelectedDestinations,
-        setUserSelectedDestinationsDetails,
       }}
     >
       <Outlet />

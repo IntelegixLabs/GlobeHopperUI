@@ -14,10 +14,8 @@ export default function Home() {
   const {
     userDestinationQuery,
     userSelectedDestinations,
-    userSelectedDestinationDetails,
     setUserDestinationQuery,
     setUserSelectedDestinations,
-    userSelectedDestinationsDetails,
   } = useContext(TripDetailsContext);
 
   const [famousDestinations, setFamousDestinations] = useState(null);
@@ -62,7 +60,6 @@ export default function Home() {
         if (typeof data === "object") {
           setViewStep(1);
           setIsLoading(false);
-          // navigate("/destination-details");
         }
       } while (typeof data === "string");
 
@@ -74,7 +71,6 @@ export default function Home() {
       setUserQuery(userDestinationQuery);
       setFamousDestinations(cohereResponseCities);
       setIsLoading(false);
-      // navigate("/destination-details");
     }, 3000);
   };
 
@@ -91,6 +87,10 @@ export default function Home() {
       setUserSelectedDestinations([cityName]);
     }
     console.log("User Selected Destination:", userSelectedDestinations);
+  };
+
+  const planItinerary = () => {
+    navigate("/home-plan-trips");
   };
 
   return (
@@ -265,6 +265,7 @@ export default function Home() {
                     <button
                       className="w-2/6 px-4 py-3 text-base bg-green-700/70 hover:bg-green-700 disabled:bg-gray-700/70 disabled:cursor-not-allowed rounded duration-200 group"
                       disabled={!userSelectedDestinations.length}
+                      onClick={planItinerary}
                     >
                       <span>Prepare my itinerary</span>
                       <i className="fa-solid fa-arrow-right fa-fw ml-2 group-hover:pl-2 duration-200"></i>
