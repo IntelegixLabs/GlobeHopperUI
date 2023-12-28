@@ -3,472 +3,297 @@ import { Link, useNavigate } from "react-router-dom";
 
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 
-import { cohereResponse } from "../samples/sampleData.js";
-import {
-  TBOSampleCountryList,
-  TBOSampleCityList,
-  TBOSampleHotelList,
-} from "../samples/sampleDataTBO.js";
+import { cohereResponse, cohereResponseCities } from "../samples/sampleData.js";
 import { Api } from "@api/Api.js";
 import { ApiTBO } from "@api/ApiTBO.js";
-import { debounce } from "lodash";
+import BACKGROUND_VIDEO from "@assets/video.mp4";
 
 export default function Home() {
   const navigate = useNavigate();
 
-  const { country, city, hotel, setCountry, setCity, setHotel } =
-    useContext(TripDetailsContext);
+  const {
+    userDestinationQuery,
+    userSelectedDestinations,
+    userSelectedDestinationDetails,
+    setUserDestinationQuery,
+    setUserSelectedDestinations,
+    userSelectedDestinationsDetails,
+  } = useContext(TripDetailsContext);
 
-  const [countries, setCountries] = useState([]);
-  const [cities, setCities] = useState([]);
-  const [hotels, setHotels] = useState([]);
-  const [isCountriesLoading, setIsCountriesLoading] = useState(true);
-  const [isCitiesLoading, setIsCitiesLoading] = useState(true);
-  const [isHotelsLoading, setIsHotelsLoading] = useState(true);
+  const [famousDestinations, setFamousDestinations] = useState(null);
+  const [userQuery, setUserQuery] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [viewStep, setViewStep] = useState(0);
 
-  // City Search vars
-  const [searchCityName, setSearchCityName] = useState("");
-  const [filteredCities, setFilteredCities] = useState([]);
-
-  // Hotel Search vars
-  const [searchHotelName, setSearchHotelName] = useState("");
-  const [filteredHotels, setFilteredHotels] = useState([]);
-
-  useEffect(() => {
-    getCountries();
-  });
-
-  const getCountries = async () => {
-    if (import.meta.env.VITE_APP_ENVIRONMENT !== "production") {
-      setCountries(TBOSampleCountryList.CountryList);
-      setTimeout(() => {
-        setIsCountriesLoading(false);
-      }, 3000);
-    } else {
-      await ApiTBO.get("/CountryList")
-        .then((response) => {
-          setCountries(response.data.data.CountryList);
-          setIsCountriesLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsCountriesLoading(false);
-        });
+  const searchPlace = async () => {
+    if (
+      userDestinationQuery === "" ||
+      userDestinationQuery === "undefined" ||
+      userDestinationQuery === null
+    ) {
+      return;
     }
-  };
 
-  const getCities = async (event, country) => {
-    setCountry(country);
-    setIsCitiesLoading(true);
+    setIsLoading(true);
 
-    if (import.meta.env.VITE_APP_ENVIRONMENT !== "production") {
-      setCities(TBOSampleCityList.CityList);
-      setTimeout(() => {
-        setIsCitiesLoading(false);
-      }, 3000);
-    } else {
+    let data = {};
+
+    if (import.meta.env.VITE_APP_ENVIRONMENT === "production") {
       const payload = {
-        CountryCode: country.Code,
+        parameters: {
+          travel_destination: userDestinationQuery,
+        },
       };
 
-      await ApiTBO.post("/CityList", payload)
-        .then((response) => {
-          setCities(response.data.data.CityList);
-          setIsCitiesLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsCitiesLoading(false);
-        });
-    }
-  };
+      do {
+        data = null;
+        await Api.post("/list_famous_destinations", payload)
+          .then((res) => {
+            data = res.data.city;
+            setUserQuery(userDestinationQuery);
+            setFamousDestinations(data);
+            setIsLoading(false);
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
-  const handleCitySearch = (e) => {
-    setIsCitiesLoading(true);
-    setSearchCityName(e.target.value.toLowerCase());
-
-    debouncedCitySearch(searchCityName);
-  };
-
-  const debouncedCitySearch = debounce((searchCityName) => {
-    const filteredCities = cities.filter((city) =>
-      city.Name.toLowerCase().includes(searchCityName)
-    );
-
-    setFilteredCities(filteredCities);
-    setIsCitiesLoading(false);
-  }, 2000);
-
-  const getHotels = async (event, city) => {
-    setCity(city);
-    setIsHotelsLoading(true);
-
-    console.log("Hotels");
-
-    if (import.meta.env.VITE_APP_ENVIRONMENT !== "production") {
-      setHotels(TBOSampleHotelList.Hotels);
-      setTimeout(() => {
-        setIsHotelsLoading(false);
-      }, 3000);
-    } else {
-      const payload = {
-        CityCode: city.Code,
-        IsDetailedResponse: "false",
-      };
-
-      await ApiTBO.post("/TBOHotelCodeList", payload)
-        .then((response) => {
-          setHotels(response.data.data.Hotels);
-          setIsHotelsLoading(false);
-        })
-        .catch((error) => {
-          console.log(error);
-          setIsHotelsLoading(false);
-        });
-    }
-  };
-
-  const handleHotelSearch = (e) => {
-    setIsHotelsLoading(true);
-    setSearchHotelName(e.target.value.toLowerCase());
-
-    debouncedHotelSearch(searchHotelName);
-  };
-
-  const debouncedHotelSearch = debounce((searchHotelName) => {
-    const filteredHotels = hotels.filter((hotel) =>
-      hotel.HotelName.toLowerCase().includes(searchHotelName)
-    );
-
-    setFilteredHotels(filteredHotels);
-    setIsHotelsLoading(false);
-  }, 2000);
-
-  const resetToStep = (stepNo) => {
-
-    if (stepNo === 0) {
-      setCity(null);
-      setCountry(null);
+        if (typeof data === "object") {
+          setViewStep(1);
+          setIsLoading(false);
+          // navigate("/destination-details");
+        }
+      } while (typeof data === "string");
 
       return;
     }
 
-    if (stepNo === 1) {
-      setCity(null);
+    setTimeout(() => {
+      setViewStep(1);
+      setUserQuery(userDestinationQuery);
+      setFamousDestinations(cohereResponseCities);
+      setIsLoading(false);
+      // navigate("/destination-details");
+    }, 3000);
+  };
 
-      return;
+  const toggleSelectCity = (event, cityName) => {
+    if (userSelectedDestinations) {
+      if (userSelectedDestinations.includes(cityName)) {
+        setUserSelectedDestinations(
+          userSelectedDestinations.filter((c) => c !== cityName)
+        );
+      } else {
+        setUserSelectedDestinations([...userSelectedDestinations, cityName]);
+      }
+    } else {
+      setUserSelectedDestinations([cityName]);
     }
-
-    return;
+    console.log("User Selected Destination:", userSelectedDestinations);
   };
 
   return (
     <Fragment>
-      <p className="mt-2 font-light text-center text-base">
-        Your personal AI globe guide
-      </p>
+      <div className="relative flex items-center justify-center h-screen overflow-hidden">
+        <video
+          className="absolute z-10 w-auto min-w-full min-h-full max-w-none"
+          autoPlay
+          loop
+          muted
+        >
+          <source src={BACKGROUND_VIDEO} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+        <div className="absolute z-20 bg-black bg-opacity-50 h-screen min-h-full w-full"></div>
 
-      {!country && (
-        <Fragment>
-          {isCountriesLoading && (
-            <div className="mt-10 max-w-7xl mx-auto">
-              <h6 className="text-center">Loading Countries...</h6>
+        {viewStep === 0 && (
+          <div className="relative w-full max-w-md ml-10 text-2xl text-white bg-opacity-80 rounded-xl z-30">
+            <h1 className="font-bold text-5xl text-center">
+              {import.meta.env.VITE_APP_NAME}
+            </h1>
+
+            <p className="mt-2 font-light text-center text-base">
+              Your personal AI globe guide
+            </p>
+
+            <div className="mt-8 py-1 px-1.5 bg-white/10 backdrop-blur-md flex border border-white/60 hover:border-white focus-within:border-white rounded-full gap-2 duration-200">
+              <input
+                type="text"
+                className="w-full pl-3 text-yellow-100 text-xl bg-transparent outline-none rounded-full"
+                placeholder="Where you want to go?"
+                onChange={(event) =>
+                  setUserDestinationQuery(event.target.value)
+                }
+                value={userDestinationQuery}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") searchPlace();
+                }}
+                disabled={isLoading}
+              />
+              {isLoading ? (
+                <div className="p-2 rounded-full">
+                  <i className="fa-solid fa-circle-notch fa-spin fa-fw"></i>
+                </div>
+              ) : (
+                <button
+                  className="p-2 bg-green-600 hover:bg-green-500 rounded-full duration-200"
+                  onClick={searchPlace}
+                >
+                  <i className="fa-solid fa-paper-plane fa-fw"></i>
+                </button>
+              )}
             </div>
-          )}
 
-          {!isCountriesLoading && (
-            <div className="mt-10 max-w-7xl mx-auto grid grid-cols-6 gap-4">
-              {countries.length && (
-                <Fragment>
-                  {countries.map((country, index) => {
-                    return (
+            <div className="mt-8 flex justify-center gap-x-6">
+              <Link
+                to="/about"
+                className="text-base text-white/80 hover:text-white hover:underline rounded"
+              >
+                about us
+              </Link>
+              <Link
+                to="/destination-search"
+                className="text-base text-white/80 hover:text-white hover:underline rounded"
+              >
+                destination search
+              </Link>
+              <Link
+                to="/plan-trip"
+                className="text-base text-white/80 hover:text-white hover:underline rounded"
+              >
+                plan a trip
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {viewStep === 1 && (
+          <div className="relative w-full max-w-7xl ml-10 text-2xl text-white bg-opacity-80 rounded-xl z-30">
+            <h1 className="font-bold text-5xl">
+              {import.meta.env.VITE_APP_NAME}
+            </h1>
+            <p className="mt-2 font-light text-base">
+              Your personal AI globe guide
+            </p>
+
+            <div className="mt-8 flex gap-8">
+              <div className="w-2/6">
+                <div className="sticky">
+                  <div className="py-1 px-1.5 bg-white/10 backdrop-blur-md flex border border-white/60 hover:border-white focus-within:border-white rounded-full gap-2 duration-200">
+                    <input
+                      type="text"
+                      className="w-full pl-3 text-yellow-100 text-xl bg-transparent outline-none rounded-full"
+                      placeholder="Where you want to go?"
+                      onChange={(event) =>
+                        setUserDestinationQuery(event.target.value)
+                      }
+                      value={userDestinationQuery}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") searchPlace();
+                      }}
+                      disabled={isLoading}
+                    />
+                    {isLoading ? (
+                      <div className="p-2 rounded-full">
+                        <i className="fa-solid fa-circle-notch fa-spin fa-fw"></i>
+                      </div>
+                    ) : (
                       <button
-                        key={index}
-                        className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
-                        onClick={(event) => getCities(event, country)}
+                        className="p-2 bg-green-600 hover:bg-green-500 rounded-full duration-200"
+                        onClick={searchPlace}
                       >
-                        <h6 className="text-center">{country.Name}</h6>
+                        <i className="fa-solid fa-paper-plane fa-fw"></i>
                       </button>
-                    );
-                  })}
-                </Fragment>
-              )}
-            </div>
-          )}
-        </Fragment>
-      )}
-
-      {country && (
-        <div className="mt-10 max-w-7xl mx-auto">
-          <div className="flex items-center justify-between">
-            <ol className="flex items-center w-full space-x-2 text-sm font-medium text-gray-500 bg-white rounded-lg sm:text-base sm:space-x-4">
-              <li
-                className={`flex items-center cursor-pointer ${
-                  country ? "text-blue-600" : "text-gray-500"
-                }`}
-                onClick={() => resetToStep(0)}
-              >
-                <span
-                  className={`flex items-center justify-center w-10 h-10 me-2 text-xl border ${
-                    country ? "border-blue-600" : "border-gray-500"
-                  } rounded-full shrink-0`}
-                >
-                  1
-                </span>
-                <div className="flex flex-col text-sm">
-                  <h6>Select Country</h6>
-                  <h6>{country.Name}</h6>
-                </div>
-                <svg
-                  className="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 12 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m7 9 4-4-4-4M1 9l4-4-4-4"
-                  />
-                </svg>
-              </li>
-              <li
-                className={`flex items-center cursor-pointer ${
-                  city ? "text-blue-600" : "text-gray-500"
-                }`}
-                onClick={() => resetToStep(1)}
-              >
-                <span
-                  className={`flex items-center justify-center w-10 h-10 me-2 text-xl border ${
-                    city ? "border-blue-600" : "border-gray-500"
-                  } rounded-full shrink-0`}
-                >
-                  2
-                </span>
-                <div className="flex flex-col text-sm">
-                  <h6>Select City</h6>
-                  <h6>{city ? city.Name:''}</h6>
-                </div>
-                <svg
-                  className="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 12 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m7 9 4-4-4-4M1 9l4-4-4-4"
-                  />
-                </svg>
-              </li>
-              <li className="flex items-center">
-                <span className="flex items-center justify-center w-10 h-10 me-2 text-xl border border-gray-500 rounded-full shrink-0">
-                  3
-                </span>
-                <div className="flex flex-col text-sm">
-                  <h6>Select Hotel</h6>
-                  <h6>Hotel</h6>
-                </div>
-              </li>
-            </ol>
-            {/* <button
-              className="no-underline hover:underline"
-              onClick={() => setCountry(null)}
-            >
-              <i className="fa-solid fa-arrow-left fa-fw"></i> back to countries
-            </button> */}
-
-            {country && !city && (
-              <div className="px-1 py-1 border flex items-center justify-between rounded-full">
-                <input
-                  type="text"
-                  className="pl-3 py-1 outline-none rounded-full"
-                  placeholder="Search city..."
-                  maxLength={50}
-                  onChange={(e) => handleCitySearch(e)}
-                />
-                <button className="rounded-full bg-gray-100 hover:bg-gray-200 py-1 px-1.5">
-                  <i className="fa-solid fa-magnifying-glass fa-fw"></i>
-                </button>
-              </div>
-            )}
-
-            {country && city && (
-              <div className="px-1 py-1 border flex items-center justify-between rounded-full">
-                <input
-                  type="text"
-                  className="pl-3 py-1 outline-none rounded-full"
-                  placeholder="Search hotel..."
-                  maxLength={50}
-                  onChange={(e) => handleHotelSearch(e)}
-                />
-                <button className="rounded-full bg-gray-100 hover:bg-gray-200 py-1 px-1.5">
-                  <i className="fa-solid fa-magnifying-glass fa-fw"></i>
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="mt-4 flex gap-4">
-            <div className="w-2/6">
-              <div className="sticky top-10 border-r">
-                <div className="mr-4 p-4 border rounded-md">
-                  <h6 className="text-gray-400 text-sm">Country</h6>
-                  <h6 className="mt-1 font-semibold text-xl">{country.Name}</h6>
-                  <p className="my-4 text-gray-400 text-sm">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
-                  </p>
-                </div>
-
-                {city && (
-                  <div className="mt-4 mr-4 p-4 border rounded-md">
-                    <h6 className="text-gray-400 text-sm">City</h6>
-                    <h6 className="mt-1 font-semibold text-xl">{city.Name}</h6>
-                    <p className="my-4 text-gray-400 text-sm">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                      Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                      sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim id est laborum.
-                    </p>
+                    )}
                   </div>
-                )}
+                  <div className="mt-4 ml-4 flex justify-between items-center gap-x-4">
+                    <p className="font-light text-xl">
+                      You searched for <br />{" "}
+                      <strong className="font-semibold">"{userQuery}"</strong>
+                    </p>
+                    <button
+                      className="pt-1 pb-0.5 px-2 bg-white/20 hover:bg-white/40 rounded-full"
+                      onClick={() => {
+                        setUserDestinationQuery(null);
+                        setViewStep(0);
+                      }}
+                    >
+                      <i className="fa-solid fa-times fa-fw fa-xs"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div className="w-4/6">
+                <div className="pl-8 border-l border-l-white/20">
+                  <h2 className="font-normal text-2xl">Select Cities</h2>
+                  <p className="font-light text-4xl">you wanna visit</p>
+                  {famousDestinations && (
+                    <div className="h-96 mt-6 grid grid-cols-3 gap-4 overflow-y-auto">
+                      {famousDestinations.map((famousDestination, index) => {
+                        return (
+                          <div
+                            className="px-4 py-3 backdrop-blur-sm border border-white/40 bg-white/20 hover:bg-white/40 flex items-center justify-between cursor-pointer rounded-md duration-200 gap-x-4"
+                            key={index}
+                            onClick={(event) =>
+                              toggleSelectCity(event, famousDestination)
+                            }
+                          >
+                            <h6 className="text-base">{famousDestination}</h6>
+                            <div>
+                              {userSelectedDestinations.includes(
+                                famousDestination
+                              ) ? (
+                                <i className="fa-solid fa-check-circle fa-fw"></i>
+                              ) : (
+                                <i className="fa-solid fa-check-circle fa-fw opacity-20"></i>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  <hr className="mt-6 mb-4 border-white/20" />
+
+                  <div className="mb-4 flex justify-between gap-x-6">
+                    <p className="w-4/6 text-base">
+                      You need to select atleast one city. Those itineraries
+                      will be prepared based on the cities that you selected.
+                    </p>
+                    <button
+                      className="w-2/6 px-4 py-3 text-base bg-green-700/70 hover:bg-green-700 disabled:bg-gray-700/70 disabled:cursor-not-allowed rounded duration-200 group"
+                      disabled={!userSelectedDestinations.length}
+                    >
+                      <span>Prepare my itinerary</span>
+                      <i className="fa-solid fa-arrow-right fa-fw ml-2 group-hover:pl-2 duration-200"></i>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="w-4/6">
-              {country && !city && (
-                <Fragment>
-                  {isCitiesLoading && (
-                    <div className="mt-10 max-w-7xl mx-auto">
-                      <h6 className="text-center">Loading Cities...</h6>
-                    </div>
-                  )}
-
-                  {!isCitiesLoading && (
-                    <div className="grid grid-cols-3 gap-4">
-                      {cities.length && !searchCityName && (
-                        <Fragment>
-                          {cities.map((city, index) => {
-                            return (
-                              <button
-                                key={index}
-                                className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
-                                onClick={(e) => getHotels(e, city)}
-                              >
-                                <h6 className="text-center">{city.Name}</h6>
-                              </button>
-                            );
-                          })}
-                        </Fragment>
-                      )}
-
-                      {searchCityName && (
-                        <Fragment>
-                          {filteredCities.map((city, index) => {
-                            return (
-                              <button
-                                key={index}
-                                className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
-                              >
-                                <h6 className="text-center">{city.Name}</h6>
-                              </button>
-                            );
-                          })}
-                        </Fragment>
-                      )}
-                    </div>
-                  )}
-                </Fragment>
-              )}
-
-              {country && city && (
-                <Fragment>
-                  {isHotelsLoading && (
-                    <div className="mt-10 max-w-7xl mx-auto">
-                      <h6 className="text-center">Loading Hotels...</h6>
-                    </div>
-                  )}
-
-                  {!isHotelsLoading && (
-                    <div className="grid grid-cols-3 gap-4">
-                      {hotels.length && !searchHotelName && (
-                        <Fragment>
-                          {hotels.map((hotel, index) => {
-                            return (
-                              <button
-                                key={index}
-                                className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
-                                onClick={(e) => getHotels(e, hotel)}
-                              >
-                                <h6 className="text-center">
-                                  {hotel.HotelName}
-                                </h6>
-                              </button>
-                            );
-                          })}
-                        </Fragment>
-                      )}
-
-                      {searchHotelName && (
-                        <Fragment>
-                          {filteredHotels.map((hotel, index) => {
-                            return (
-                              <button
-                                key={index}
-                                className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
-                              >
-                                <h6 className="text-center">
-                                  {hotel.HotelName}
-                                </h6>
-                              </button>
-                            );
-                          })}
-                        </Fragment>
-                      )}
-                    </div>
-                  )}
-                </Fragment>
-              )}
+            <div className="mt-8 flex gap-x-6">
+              <Link
+                to="/about"
+                className="text-base text-white/60 hover:text-white hover:underline rounded"
+              >
+                about us
+              </Link>
+              <Link
+                to="/destination-search"
+                className="text-base text-white/60 hover:text-white hover:underline rounded"
+              >
+                destination search
+              </Link>
+              <Link
+                to="/plan-trip"
+                className="text-base text-white/60 hover:text-white hover:underline rounded"
+              >
+                plan a trip
+              </Link>
             </div>
           </div>
-        </div>
-      )}
-
-      <div className="mt-8 flex justify-center gap-x-6">
-        <Link
-          to="/about"
-          className="text-base text-white/80 hover:text-white hover:underline rounded"
-        >
-          about us
-        </Link>
-        <Link
-          to="/destination-search"
-          className="text-base text-white/80 hover:text-white hover:underline rounded"
-        >
-          destination search
-        </Link>
-        <Link
-          to="/plan-trip"
-          className="text-base text-white/80 hover:text-white hover:underline rounded"
-        >
-          plan a trip
-        </Link>
+        )}
       </div>
     </Fragment>
   );

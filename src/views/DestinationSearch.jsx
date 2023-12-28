@@ -7,7 +7,6 @@ import { cohereResponse } from "../samples/sampleData.js";
 import { Api } from "@api/Api.js";
 
 export default function DestinationSearch() {
-
   const navigate = useNavigate();
 
   const { destination, setDestination, setDestinationDetails } =

@@ -1,6 +1,7 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Home from "@views/Home.jsx";
+import TBO from "@views/TBO.jsx";
 import DestinationSearch from "@views/DestinationSearch.jsx";
 import About from "@views/About.jsx";
 import PlanTrip from "@views/PlanTrip.jsx";
@@ -21,6 +22,11 @@ const router = createBrowserRouter([
         path: "/",
         name: "Home",
         element: <Home />,
+      },
+      {
+        path: "/tbo",
+        name: "TBO",
+        element: <TBO />,
       },
       {
         path: "/",
