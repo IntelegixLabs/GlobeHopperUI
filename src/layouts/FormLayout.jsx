@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom";
 import { Link } from "react-router-dom";
 import BACKGROUND_VIDEO from "@assets/video.mp4";
 
-export default function GuestLayout(props) {
+export default function FormLayout(props) {
   return (
     <Fragment>
       <div className="relative flex items-center justify-center h-screen overflow-hidden">
