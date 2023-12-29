@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { TripDetailsContext } from '@contexts/TripDetailsContext.js';
+import ChatBot from "@components/ChatBot.jsx";
 
 export default function GuestLayout() {
   const [country, setCountry] = useState(null);
@@ -34,6 +35,7 @@ export default function GuestLayout() {
       }}
     >
       <Outlet />
+      <ChatBot />
     </TripDetailsContext.Provider>
   );
 }
