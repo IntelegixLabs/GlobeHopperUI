@@ -153,15 +153,21 @@ export default function HomePlanTrip() {
         )}
       </div>
 
-      <div className="w-full z-10 sticky top-0 py-6 border-y bg-white/80 shadow backdrop-blur-sm flex justify-center gap-x-4">
-        {userSelectedDestinations.map((destination, index) => {
-          return (
-            <a key={index} href={`#${destination}`} className="hover:underline">
-              {destination}
-            </a>
-          );
-        })}
-      </div>
+      {!isLoading && (
+        <div className="w-full z-10 sticky top-0 py-6 border-y bg-white/80 shadow backdrop-blur-sm flex justify-center gap-x-4">
+          {userSelectedDestinations.map((destination, index) => {
+            return (
+              <a
+                key={index}
+                href={`#${destination}`}
+                className="hover:underline"
+              >
+                {destination}
+              </a>
+            );
+          })}
+        </div>
+      )}
       {isLoading && (
         <div className="my-10 2xl:px-20">
           <h1>Loading Itineraries...</h1>
