@@ -99,7 +99,7 @@ export default function HomePlanTrip() {
           <h1 className="font-bold text-5xl">
             {import.meta.env.VITE_APP_NAME}
           </h1>
-          <p className="ml-2 mt-2 font-light text-base">
+          <p className="ml-1 mt-2 font-light text-base">
             Your personal AI globe guide
           </p>
         </div>
@@ -268,7 +268,7 @@ export default function HomePlanTrip() {
                                 return (
                                   <Fragment key={indexItinerary}>
                                     <hr className="mt-8 mb-2" />
-                                    <h6 className="text-center font-semibold text-2xl print:bg-red-400">
+                                    <h6 className="text-center font-semibold text-2xl">
                                       Day {itinerary.Day}
                                     </h6>
                                     <hr className="mt-4 mb-2" />
