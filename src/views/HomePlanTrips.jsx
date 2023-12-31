@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 import {
   cohereResponseItineraryImages,
@@ -6,6 +6,7 @@ import {
 } from "../samples/sampleData.js";
 import { Link } from "react-router-dom";
 import { Api } from "@api/Api.js";
+import printJS from "print-js";
 
 export default function HomePlanTrip() {
   const { userSelectedDestinations, setUserSelectedDestinations } =
@@ -15,12 +16,13 @@ export default function HomePlanTrip() {
   const [destinationsDetails, setDestinationsDetails] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const htmlBody = useRef(null);
+
   useEffect(() => {
     initLoad();
-    console.log("Home trip user selected destinations:", userSelectedDestinations);
   }, []);
 
-  const initLoad = async () => {
+  const initLoad = () => {
     setIsLoading(true);
 
     console.log(
@@ -29,14 +31,13 @@ export default function HomePlanTrip() {
       cohereResponseItineraryImages
     );
 
-    setDestinationsDetails([]);
-    setDestinationsImages([]);
+    // setDestinationsDetails(null);
+    // setDestinationsImages(null);
 
-    let thisDestinationsDetails = [];
-    let thisDestinationsDetailsImages = [];
+    // let thisDestinationsDetails = [];
+    // let thisDestinationsDetailsImages = [];
 
     if (import.meta.env.VITE_APP_ENVIRONMENT === "production") {
-
       for (let i = 0; i < userSelectedDestinations.length; i++) {
         const payload = {
           parameters: {
@@ -51,7 +52,7 @@ export default function HomePlanTrip() {
           },
         };
 
-        await Api.post("/travel_planner", payload)
+        Api.post("/travel_planner", payload)
           .then((res) => {
             setDestinationsDetails([...destinationsDetails, res.data]);
           })
@@ -59,7 +60,7 @@ export default function HomePlanTrip() {
             console.log(error);
           });
 
-        await Api.post("/images", imagePayload)
+        Api.post("/images", imagePayload)
           .then((res) => {
             setDestinationsImages([...destinationsImages, res.data]);
           })
@@ -70,20 +71,9 @@ export default function HomePlanTrip() {
 
       setIsLoading(false);
     } else {
-      for (let i = 0; i < cohereResponseItinerary.length; i++) {
-        thisDestinationsDetails.push(cohereResponseItinerary[i]);
-        thisDestinationsDetailsImages.push(cohereResponseItineraryImages[i]);
 
-        // console.log("Length in i:", i);
-        // console.log("Destinations Details:", cohereResponseItinerary[i]);
-        // console.log("Destinations Images:", cohereResponseItineraryImages[i]);
-      }
-
-      setDestinationsDetails(thisDestinationsDetails);
-      setDestinationsImages(thisDestinationsDetailsImages);
-
-      console.log("Destinations Details:", destinationsDetails);
-      console.log("Destinations Images:", destinationsImages);
+      setDestinationsDetails(cohereResponseItinerary);
+      setDestinationsImages(cohereResponseItineraryImages);
 
       console.log(
         "After setting states:",
@@ -91,9 +81,17 @@ export default function HomePlanTrip() {
         destinationsImages
       );
 
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
     }
   };
+
+  const printAsPDF = () => {
+    console.log("HTML Body:", htmlBody.current.id);
+
+    printJS(htmlBody.current.id, "html");
+  }
 
   return (
     <Fragment>
@@ -145,13 +143,14 @@ export default function HomePlanTrip() {
         </p>
       </div>
 
-      {!isLoading && (
+      <button className="p-4 bg-black text-white" onClick={printAsPDF}>Print PDF</button>
+      {isLoading && (
         <div className="my-10 2xl:px-20">
           <h1>Loading Itineraries...</h1>
         </div>
       )}
-      {isLoading && (
-        <div className="my-10 2xl:px-20 flex gap-x-10">
+      {!isLoading && (
+        <div ref={htmlBody} id="displayBody" className="my-10 2xl:px-20 flex gap-x-10">
           <div className="w-1/2 logos">
             {destinationsImages.length > 0 && (
               <Fragment>
@@ -169,7 +168,7 @@ export default function HomePlanTrip() {
                         return (
                           <img
                             key={photoIndex}
-                            className="w-80 h-40 rounded-xl"
+                            className="w-96 h-80 rounded-xl"
                             src={photo.src.medium}
                             alt={photo.alt}
                           />
@@ -179,7 +178,7 @@ export default function HomePlanTrip() {
                         return (
                           <img
                             key={photoIndex}
-                            className="w-80 h-40 rounded-xl"
+                            className="w-96 h-80 rounded-xl"
                             src={photo.src.medium}
                             alt={photo.alt}
                           />
@@ -189,7 +188,7 @@ export default function HomePlanTrip() {
                         return (
                           <img
                             key={photoIndex}
-                            className="w-80 h-40 rounded-xl"
+                            className="w-96 h-80 rounded-xl"
                             src={photo.src.medium}
                             alt={photo.alt}
                           />
@@ -199,7 +198,7 @@ export default function HomePlanTrip() {
                         return (
                           <img
                             key={photoIndex}
-                            className="w-80 h-40 rounded-xl"
+                            className="w-96 h-80 rounded-xl"
                             src={photo.src.medium}
                             alt={photo.alt}
                           />
