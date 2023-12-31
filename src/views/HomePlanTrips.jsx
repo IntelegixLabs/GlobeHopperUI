@@ -94,7 +94,6 @@ export default function HomePlanTrip() {
 
   return (
     <Fragment>
-
       <div className="mt-4 mb-10 2xl:px-20 flex items-center justify-between">
         <div>
           <h1 className="font-bold text-5xl">
@@ -154,6 +153,15 @@ export default function HomePlanTrip() {
         )}
       </div>
 
+      <div className="w-full z-10 sticky top-0 py-6 border-y bg-white/80 shadow backdrop-blur-sm flex justify-center gap-x-4">
+        {userSelectedDestinations.map((destination, index) => {
+          return (
+            <a key={index} href={`#${destination}`} className="hover:underline">
+              {destination}
+            </a>
+          );
+        })}
+      </div>
       {isLoading && (
         <div className="my-10 2xl:px-20">
           <h1>Loading Itineraries...</h1>
@@ -170,161 +178,179 @@ export default function HomePlanTrip() {
               {destinationsDetails.map((destinationDetails, index) => {
                 return (
                   <Fragment key={index}>
-                    <div className="p-4 flex border rounded gap-4">
-                      <div className="w-3/12">
-                        <div className="grid grid-cols-1 gap-4">
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[0].src.medium}
-                            alt={destinationsImages[index].photos[0].alt}
-                          />
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[1].src.medium}
-                            alt={destinationsImages[index].photos[1].alt}
-                          />
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[2].src.medium}
-                            alt={destinationsImages[index].photos[2].alt}
-                          />
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[3].src.medium}
-                            alt={destinationsImages[index].photos[3].alt}
-                          />
-                        </div>
-                      </div>
-                      <div className="w-6/12">
-                        <div key={index} className="mx-10">
-                          <h1 className="text-center font-bold text-4xl">
-                            {userSelectedDestinations[index]}
-                          </h1>
-                          <div className="my-4 px-4 py-2 text-center border rounded">
-                            <h2 className="font-semibold text-2xl">
-                              Introduction
-                            </h2>
-                            <p className="my-2 text-gray-500">
-                              {destinationDetails.introduction}
-                            </p>
+                    <div id={userSelectedDestinations[index]} className="pt-16">
+                      <div className="p-4 flex border rounded gap-4">
+                        <div className="w-3/12">
+                          <div className="grid grid-cols-1 gap-4">
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[0].src.medium
+                              }
+                              alt={destinationsImages[index].photos[0].alt}
+                            />
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[1].src.medium
+                              }
+                              alt={destinationsImages[index].photos[1].alt}
+                            />
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[2].src.medium
+                              }
+                              alt={destinationsImages[index].photos[2].alt}
+                            />
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[3].src.medium
+                              }
+                              alt={destinationsImages[index].photos[3].alt}
+                            />
                           </div>
-
-                          <div className="logos">
-                            <div
-                              key={index}
-                              className="flex my-4 logos-slide logos-animate-left gap-x-4"
-                            >
-                              {destinationsImages[index].photos.map(
-                                (photo, photoIndex) => {
-                                  return (
-                                    <img
-                                      key={photoIndex}
-                                      className="w-40 h-20 rounded-xl"
-                                      src={photo.src.medium}
-                                      alt={photo.alt}
-                                    />
-                                  );
-                                }
-                              )}
-                              {destinationsImages[index].photos.map(
-                                (photo, photoIndex) => {
-                                  return (
-                                    <img
-                                      key={photoIndex}
-                                      className="w-40 h-20 rounded-xl"
-                                      src={photo.src.medium}
-                                      alt={photo.alt}
-                                    />
-                                  );
-                                }
-                              )}
+                        </div>
+                        <div className="w-6/12">
+                          <div key={index} className="mx-10">
+                            <h1 className="text-center font-bold text-4xl">
+                              {userSelectedDestinations[index]}
+                            </h1>
+                            <div className="my-4 px-4 py-2 text-center border rounded">
+                              <h2 className="font-semibold text-2xl">
+                                Introduction
+                              </h2>
+                              <p className="my-2 text-gray-500">
+                                {destinationDetails.introduction}
+                              </p>
                             </div>
+
+                            <div className="logos">
+                              <div
+                                key={index}
+                                className="flex my-4 logos-slide logos-animate-left gap-x-4"
+                              >
+                                {destinationsImages[index].photos.map(
+                                  (photo, photoIndex) => {
+                                    return (
+                                      <img
+                                        key={photoIndex}
+                                        className="w-40 h-20 rounded-xl"
+                                        src={photo.src.medium}
+                                        alt={photo.alt}
+                                      />
+                                    );
+                                  }
+                                )}
+                                {destinationsImages[index].photos.map(
+                                  (photo, photoIndex) => {
+                                    return (
+                                      <img
+                                        key={photoIndex}
+                                        className="w-40 h-20 rounded-xl"
+                                        src={photo.src.medium}
+                                        alt={photo.alt}
+                                      />
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </div>
+                            {destinationDetails.itinerary.map(
+                              (itinerary, indexItinerary) => {
+                                return (
+                                  <Fragment key={indexItinerary}>
+                                    <hr className="mt-8 mb-2" />
+                                    <h6 className="text-center font-semibold text-2xl print:bg-red-400">
+                                      Day {itinerary.Day}
+                                    </h6>
+                                    <hr className="mt-4 mb-2" />
+                                    <div className="mt-4 mb-6 flex gap-10">
+                                      <div className="w-1/2">
+                                        <p className="font-semibold text-lg">
+                                          Morning
+                                        </p>
+                                        <p
+                                          contentEditable
+                                          className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
+                                        >
+                                          {itinerary.morning}
+                                        </p>
+                                      </div>
+                                      <div className="w-1/2">
+                                        <p className="font-semibold text-lg">
+                                          Afternoon
+                                        </p>
+                                        <p
+                                          contentEditable
+                                          className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
+                                        >
+                                          {itinerary.afternoon}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                      <div className="w-1/2">
+                                        <p className="font-semibold text-lg">
+                                          Evening
+                                        </p>
+                                        <p
+                                          contentEditable
+                                          className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
+                                        >
+                                          {itinerary.evening}
+                                        </p>
+                                      </div>
+                                      <div className="w-1/2">
+                                        <p className="font-semibold text-lg">
+                                          Night
+                                        </p>
+                                        <p
+                                          contentEditable
+                                          className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
+                                        >
+                                          {itinerary.night}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </Fragment>
+                                );
+                              }
+                            )}
                           </div>
-                          {destinationDetails.itinerary.map(
-                            (itinerary, indexItinerary) => {
-                              return (
-                                <Fragment key={indexItinerary}>
-                                  <hr className="mt-8 mb-2" />
-                                  <h6 className="text-center font-semibold text-2xl print:bg-red-400">
-                                    Day {itinerary.Day}
-                                  </h6>
-                                  <hr className="mt-4 mb-2" />
-                                  <div className="mt-4 mb-6 flex gap-10">
-                                    <div className="w-1/2">
-                                      <p className="font-semibold text-lg">
-                                        Morning
-                                      </p>
-                                      <p
-                                        contentEditable
-                                        className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
-                                      >
-                                        {itinerary.morning}
-                                      </p>
-                                    </div>
-                                    <div className="w-1/2">
-                                      <p className="font-semibold text-lg">
-                                        Afternoon
-                                      </p>
-                                      <p
-                                        contentEditable
-                                        className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
-                                      >
-                                        {itinerary.afternoon}
-                                      </p>
-                                    </div>
-                                  </div>
-                                  <div className="flex gap-2">
-                                    <div className="w-1/2">
-                                      <p className="font-semibold text-lg">
-                                        Evening
-                                      </p>
-                                      <p
-                                        contentEditable
-                                        className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
-                                      >
-                                        {itinerary.evening}
-                                      </p>
-                                    </div>
-                                    <div className="w-1/2">
-                                      <p className="font-semibold text-lg">
-                                        Night
-                                      </p>
-                                      <p
-                                        contentEditable
-                                        className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
-                                      >
-                                        {itinerary.night}
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Fragment>
-                              );
-                            }
-                          )}
                         </div>
-                      </div>
-                      <div className="w-3/12">
-                        <div className="grid grid-cols-1 gap-4">
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[4].src.medium}
-                            alt={destinationsImages[index].photos[4].alt}
-                          />
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[5].src.medium}
-                            alt={destinationsImages[index].photos[5].alt}
-                          />
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[6].src.medium}
-                            alt={destinationsImages[index].photos[6].alt}
-                          />
-                          <img
-                            className="rounded"
-                            src={destinationsImages[index].photos[7].src.medium}
-                            alt={destinationsImages[index].photos[7].alt}
-                          />
+                        <div className="w-3/12">
+                          <div className="grid grid-cols-1 gap-4">
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[4].src.medium
+                              }
+                              alt={destinationsImages[index].photos[4].alt}
+                            />
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[5].src.medium
+                              }
+                              alt={destinationsImages[index].photos[5].alt}
+                            />
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[6].src.medium
+                              }
+                              alt={destinationsImages[index].photos[6].alt}
+                            />
+                            <img
+                              className="rounded"
+                              src={
+                                destinationsImages[index].photos[7].src.medium
+                              }
+                              alt={destinationsImages[index].photos[7].alt}
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
