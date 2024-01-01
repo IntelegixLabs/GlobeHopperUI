@@ -3,10 +3,20 @@ import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 import {
   cohereResponseItineraryImages,
   cohereResponseItinerary,
+  cohereResponseWeather,
 } from "../samples/sampleData.js";
 import { Link } from "react-router-dom";
 import { Api } from "@api/Api.js";
 import printJS from "print-js";
+
+import SUNNY from "@assets/weather-icons/sunny.png";
+import SHOWERS from "@assets/weather-icons/showers.png";
+import PARTLY_CLOUDY from "@assets/weather-icons/partly-cloudy.png";
+import CLOUDY from "@assets/weather-icons/cloudy.png";
+import STORM from "@assets/weather-icons/storm.png";
+import RAIN from "@assets/weather-icons/rain.png";
+import HAZE from "@assets/weather-icons/haze.png";
+import WIND from "@assets/weather-icons/wind.png";
 
 export default function HomePlanTrip() {
   const { userSelectedDestinations, setUserSelectedDestinations } =
@@ -14,6 +24,7 @@ export default function HomePlanTrip() {
 
   const [destinationsImages, setDestinationsImages] = useState([]);
   const [destinationsDetails, setDestinationsDetails] = useState([]);
+  const [destinationWeather, setDestinationWeather] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   const htmlBody = useRef(null);
@@ -24,18 +35,6 @@ export default function HomePlanTrip() {
 
   const initLoad = () => {
     setIsLoading(true);
-
-    console.log(
-      "Before setting states:",
-      cohereResponseItinerary,
-      cohereResponseItineraryImages
-    );
-
-    // setDestinationsDetails(null);
-    // setDestinationsImages(null);
-
-    // let thisDestinationsDetails = [];
-    // let thisDestinationsDetailsImages = [];
 
     if (import.meta.env.VITE_APP_ENVIRONMENT === "production") {
       for (let i = 0; i < userSelectedDestinations.length; i++) {
@@ -73,23 +72,21 @@ export default function HomePlanTrip() {
     } else {
       setDestinationsDetails(cohereResponseItinerary);
       setDestinationsImages(cohereResponseItineraryImages);
-
-      console.log(
-        "After setting states:",
-        destinationsDetails,
-        destinationsImages
-      );
+      setDestinationWeather(cohereResponseWeather);
 
       setTimeout(() => {
         setIsLoading(false);
-      }, 4000);
+      }, 1000);
     }
   };
 
   const printAsPDF = () => {
     // printJS(htmlBody.current.id, "html");
-
-    printJS({printable: htmlBody.current.id, type: "html", ignoreElements: ['image-carousel']});
+    printJS({
+      printable: htmlBody.current.id,
+      type: "html",
+      ignoreElements: ["image-carousel"],
+    });
   };
 
   return (
@@ -147,8 +144,8 @@ export default function HomePlanTrip() {
             className="px-4 py-3 font-semibold bg-orange-600 hover:bg-orange-700 text-white rounded-md"
             onClick={printAsPDF}
           >
-            <i class="fa-solid fa-file-arrow-down fa-fw"></i> Download / Print
-            PDF
+            <i className="fa-solid fa-file-arrow-down fa-fw"></i> Download /
+            Print PDF
           </button>
         )}
       </div>
@@ -220,9 +217,43 @@ export default function HomePlanTrip() {
                         </div>
                         <div className="w-6/12">
                           <div key={index} className="mx-10">
-                            <h1 className="text-center font-bold text-4xl">
-                              {userSelectedDestinations[index]}
-                            </h1>
+                            <div className="flex justify-between">
+                              <h1 className="text-center font-bold text-4xl">
+                                {userSelectedDestinations[index]}
+                              </h1>
+                              <div className="flex items-start gap-x-3 text-blue-600">
+                                <div>
+                                  <i className="fa-solid fa-temperature-half fa-3x"></i>
+                                </div>
+                                <div>
+                                  <h6>
+                                    {
+                                      destinationWeather[index]
+                                        .current_observation.condition
+                                        .temperature
+                                    }
+                                    &deg; F |&nbsp;
+                                    {parseFloat(
+                                      (
+                                        ((destinationWeather[index]
+                                          .current_observation.condition
+                                          .temperature -
+                                          32) *
+                                          5) /
+                                        9
+                                      ).toFixed(1)
+                                    )}
+                                    &deg; C
+                                  </h6>
+                                  <p>
+                                    {
+                                      destinationWeather[index]
+                                        .current_observation.condition.text
+                                    }
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
                             <div className="my-4 px-4 py-2 text-center border rounded">
                               <h2 className="font-semibold text-2xl">
                                 Introduction
@@ -279,7 +310,8 @@ export default function HomePlanTrip() {
                                           Morning
                                         </p>
                                         <p
-                                          contentEditable
+                                          contentEditable="true"
+                                          suppressContentEditableWarning={true}
                                           className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
                                         >
                                           {itinerary.morning}
@@ -290,7 +322,8 @@ export default function HomePlanTrip() {
                                           Afternoon
                                         </p>
                                         <p
-                                          contentEditable
+                                          contentEditable="true"
+                                          suppressContentEditableWarning={true}
                                           className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
                                         >
                                           {itinerary.afternoon}
@@ -303,7 +336,8 @@ export default function HomePlanTrip() {
                                           Evening
                                         </p>
                                         <p
-                                          contentEditable
+                                          contentEditable="true"
+                                          suppressContentEditableWarning={true}
                                           className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
                                         >
                                           {itinerary.evening}
@@ -314,7 +348,8 @@ export default function HomePlanTrip() {
                                           Night
                                         </p>
                                         <p
-                                          contentEditable
+                                          contentEditable="true"
+                                          suppressContentEditableWarning={true}
                                           className="mt-1 text-sm text-gray-600 hover:p-2 hover:border focus:p-2 focus:border focus:border-gray-400 outline-none rounded"
                                         >
                                           {itinerary.night}
@@ -325,6 +360,110 @@ export default function HomePlanTrip() {
                                 );
                               }
                             )}
+                          </div>
+                          <div className="mx-10">
+                            <h6 className="mt-10 mb-6 font-bold text-2xl">Weather</h6>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                              {destinationWeather[index].forecasts.map(
+                                (forecast, index) => {
+                                  return (
+                                    <div
+                                      className="w-full p-4 text-sm border bg-white/80 backdrop-blur-md shadow flex rounded-lg gap-4"
+                                      key={index}
+                                    >
+                                      <div>
+                                        {forecast.text === "Sunny" && (
+                                          <img
+                                            className="w-16"
+                                            src={SUNNY}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text === "Showers" && (
+                                          <img
+                                            className="w-16"
+                                            src={SHOWERS}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text === "Partly Cloudy" && (
+                                          <img
+                                            className="w-16"
+                                            src={PARTLY_CLOUDY}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text === "Mostly Cloudy" && (
+                                          <img
+                                            className="w-16"
+                                            src={CLOUDY}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text === "Haze" && (
+                                          <img
+                                            className="w-12"
+                                            src={HAZE}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text === "Rain" && (
+                                          <img
+                                            className="w-12"
+                                            src={RAIN}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text === "Storm" && (
+                                          <img
+                                            className="w-12"
+                                            src={STORM}
+                                            alt={forecast.text}
+                                          />
+                                        )}
+                                        {forecast.text !== "Sunny" &&
+                                          forecast.text !== "Showers" &&
+                                          forecast.text !== "Partly Cloudy" &&
+                                          forecast.text !== "Mostly Cloudy" &&
+                                          forecast.text !== "Haze" &&
+                                          forecast.text !== "Rain" &&
+                                          forecast.text !== "Storm" && (
+                                            <img
+                                              className="w-12"
+                                              src={WIND}
+                                              alt={forecast.text}
+                                            />
+                                          )}
+                                      </div>
+                                      <div>
+                                        <h6 className="font-semibold text-gray-400">
+                                          {forecast.day}
+                                        </h6>
+                                        <h6 className="font-semibold">
+                                          {forecast.text}
+                                        </h6>
+                                        <p className="mt-1 text-gray-600 text-sm">
+                                          {parseFloat(
+                                            (
+                                              ((forecast.high - 32) * 5) /
+                                              9
+                                            ).toFixed(1)
+                                          )}
+                                          &deg; C &nbsp; | &nbsp;
+                                          {parseFloat(
+                                            (
+                                              ((forecast.low - 32) * 5) /
+                                              9
+                                            ).toFixed(1)
+                                          )}
+                                          &deg; C
+                                        </p>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
                           </div>
                         </div>
                         <div className="w-3/12">
