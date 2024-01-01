@@ -195,6 +195,7 @@ export default function TBO() {
 
   const resetToStep = (stepNo) => {
     if (stepNo === 0) {
+      setHotel(null);
       setCity(null);
       setCountry(null);
 
@@ -202,8 +203,8 @@ export default function TBO() {
     }
 
     if (stepNo === 1) {
+      setHotel(null);
       setCity(null);
-
       return;
     }
 
