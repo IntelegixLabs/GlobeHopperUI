@@ -18,6 +18,9 @@ import RAIN from "@assets/weather-icons/rain.png";
 import HAZE from "@assets/weather-icons/haze.png";
 import WIND from "@assets/weather-icons/wind.png";
 
+import HOTEL from "@assets/convenience/hotel-room-1.jpg";
+import FLIGHT from "@assets/convenience/flight-1.jpg";
+
 export default function HomePlanTrip() {
   const { userSelectedDestinations, setUserSelectedDestinations } =
     useContext(TripDetailsContext);
@@ -362,7 +365,9 @@ export default function HomePlanTrip() {
                             )}
                           </div>
                           <div className="mx-10">
-                            <h6 className="mt-10 mb-6 font-bold text-2xl">Weather</h6>
+                            <h6 className="mt-10 mb-6 font-bold text-2xl">
+                              Weather
+                            </h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                               {destinationWeather[index].forecasts.map(
                                 (forecast, index) => {
@@ -627,6 +632,65 @@ export default function HomePlanTrip() {
           )}
         </div>
       )} */}
+
+      <div className="my-20 max-w-7xl mx-auto">
+        <h4 className="font-bold text-3xl">
+          Convenience at your fingertips with{" "}
+          <a
+            className="text-blue-600 hover:underline"
+            href="https://www.tbo.com/"
+          >
+            TBO.com
+          </a>
+        </h4>
+        <div className="mt-4 flex gap-4">
+          <div className="w-1/2 p-2 border bg-white shadow-lg rounded-lg">
+            <img
+              className="w-full object-cover h-[260px]"
+              src={HOTEL}
+              alt="hotels"
+            />
+            <p className="mt-4 text-lg">
+              Seamless hotel bookings made easy. Your comfort, your choice.
+            </p>
+            <p className="text-lg">
+              With{" "}
+              <a
+                className="text-blue-700"
+                href="https://tbo.com"
+                target="_blank"
+              >
+                TBO.com
+              </a>
+              , your hotel bookings are taken care of.
+            </p>
+            <p className="mt-4 text-blue-500">#BookWithEase, #BookWithTBO</p>
+          </div>
+          <div className="w-1/2 p-2 border bg-white shadow-lg rounded-lg">
+            <img
+              className="w-full object-cover h-[260px]"
+              src={FLIGHT}
+              alt="flights"
+            />
+            <p className="mt-4 text-lg">
+              Fly hassle-free with our easy booking platform. Your journey, your
+              way..
+            </p>
+            <p className="text-lg">
+              With{" "}
+              <a
+                className="text-blue-700"
+                href="https://tbo.com"
+                target="_blank"
+              >
+                TBO.com
+              </a>
+              , everything just happens without you have to worry about it.
+            </p>
+            <p className="mt-4 text-blue-500">#FlyWithEase, #BookWithTBO</p>
+          </div>
+        </div>
+      </div>
     </Fragment>
   );
 }
