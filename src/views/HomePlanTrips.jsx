@@ -118,6 +118,12 @@ export default function HomePlanTrip() {
               about us
             </Link>
             <Link
+              to="/tbo"
+              className="text-base text-white/60 hover:text-white hover:underline rounded"
+            >
+              TBO
+            </Link>
+            <Link
               to="/destination-search"
               className="text-base text-gray/60 hover:text-gray hover:underline rounded"
             >
