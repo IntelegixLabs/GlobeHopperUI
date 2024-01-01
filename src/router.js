@@ -1,6 +1,9 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import Home from "@views/Home.jsx";
+import HomePlanTrips from "@views/HomePlanTrips.jsx";
+import TBO from "@views/TBO.jsx";
+import DestinationSearch from "@views/DestinationSearch.jsx";
 import About from "@views/About.jsx";
 import PlanTrip from "@views/PlanTrip.jsx";
 import TripDetails from "@views/TripDetails.jsx";
@@ -18,13 +21,28 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
+        name: "Home",
+        element: <Home />,
+      },
+      {
+        path: "/home-plan-trips",
+        name: "HomePlanTrips",
+        element: <HomePlanTrips />,
+      },
+      {
+        path: "/tbo",
+        name: "TBO",
+        element: <TBO />,
+      },
+      {
+        path: "/",
         name: "FormLayout",
         element: <FormLayout />,
         children: [
           {
-            path: "/",
+            path: "/destination-search",
             name: "Home",
-            element: <Home />,
+            element: <DestinationSearch />,
           },
           {
             path: "/plan-trip",

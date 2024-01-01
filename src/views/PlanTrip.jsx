@@ -164,16 +164,22 @@ export default function PlanTrip() {
 
       <div className="mt-8 flex justify-center gap-x-6">
         <Link
+          to="/"
+          className="text-base text-white/80 hover:text-white hover:underline rounded"
+        >
+          home
+        </Link>
+        <Link
           to="/about"
           className="text-base text-white/80 hover:text-white hover:underline rounded"
         >
           about us
         </Link>
         <Link
-          to="/"
+          to="/destination-search"
           className="text-base text-white/80 hover:text-white hover:underline rounded"
         >
-          destinations
+          destination search
         </Link>
       </div>
     </Fragment>
