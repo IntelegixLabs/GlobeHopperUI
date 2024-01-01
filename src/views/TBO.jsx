@@ -27,6 +27,7 @@ export default function TBO() {
   const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const [isCitiesLoading, setIsCitiesLoading] = useState(true);
   const [isHotelsLoading, setIsHotelsLoading] = useState(true);
+  const [isHotelDetailsLoading, setIsHotelDetailsLoading] = useState(true);
 
   // Descriptions
   const [countryDescription, setCountryDescription] = useState("");
@@ -43,6 +44,9 @@ export default function TBO() {
   // Hotel Search vars
   const [searchHotelName, setSearchHotelName] = useState("");
   const [filteredHotels, setFilteredHotels] = useState([]);
+
+  // Hotel details
+  const [hotelDetails, setHotelDetails] = useState([]);
 
   useEffect(() => {
     getCountries();
@@ -166,6 +170,29 @@ export default function TBO() {
     setIsHotelsLoading(false);
   }, 2000);
 
+  const getHotelDetails = (event, hotel) => {
+    setIsHotelDetailsLoading(true);
+    setHotel(hotel);
+
+    console.log("Hotel:", hotel);
+
+    const payload = {
+      Hotelcodes: hotel.HotelCode,
+      Language: "en",
+    };
+
+    ApiTBO.post("/Hoteldetails", payload)
+      .then((res) => {
+        setHotelDetails(res.data.HotelDetails);
+        setIsHotelDetailsLoading(false);
+
+        console.log("Hotel Details:", res.data.HotelDetails);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const resetToStep = (stepNo) => {
     if (stepNo === 0) {
       setCity(null);
@@ -176,6 +203,12 @@ export default function TBO() {
 
     if (stepNo === 1) {
       setCity(null);
+
+      return;
+    }
+
+    if (stepNo === 2) {
+      setHotel(null);
 
       return;
     }
@@ -301,18 +334,27 @@ export default function TBO() {
                   />
                 </svg>
               </li>
-              <li className="flex items-center">
-                <span className="flex items-center justify-center w-10 h-10 me-2 text-xl border border-gray-500 rounded-full shrink-0">
+              <li
+                className={`flex items-center cursor-pointer ${
+                  hotel ? "text-blue-600" : "text-gray-500"
+                }`}
+                onClick={() => resetToStep(2)}
+              >
+                <span
+                  className={`flex items-center justify-center w-10 h-10 me-2 text-xl border ${
+                    hotel ? "border-blue-600" : "border-gray-500"
+                  } rounded-full shrink-0`}
+                >
                   3
                 </span>
                 <div className="flex flex-col text-sm">
                   <h6>Select Hotel</h6>
-                  <h6>Hotel</h6>
+                  <h6>{hotel ? hotel.HotelName : ""}</h6>
                 </div>
               </li>
             </ol>
 
-            {country && !city && (
+            {country && !city && !hotel && (
               <div className="px-1 py-1 border flex items-center justify-between rounded-full">
                 <input
                   type="text"
@@ -327,7 +369,7 @@ export default function TBO() {
               </div>
             )}
 
-            {country && city && (
+            {country && city && !hotel && (
               <div className="px-1 py-1 border flex items-center justify-between rounded-full">
                 <input
                   type="text"
@@ -355,7 +397,7 @@ export default function TBO() {
                       alt="country_flag"
                     />
                   </div>
-                  <p className="my-4 text-gray-400 text-sm">
+                  <div className="my-4 text-gray-400 text-sm">
                     {isCountryDescriptionLoading ? (
                       <Fragment>
                         <div className="flex gap-1">
@@ -376,14 +418,14 @@ export default function TBO() {
                     ) : (
                       <ReadMore text={countryDescription} maxLength={200} />
                     )}
-                  </p>
+                  </div>
                 </div>
 
                 {city && (
                   <div className="mt-4 mr-4 p-4 border rounded-md">
                     <h6 className="text-gray-400 text-sm">City</h6>
                     <h6 className="mt-1 font-semibold text-xl">{city.Name}</h6>
-                    <p className="my-4 text-gray-400 text-sm">
+                    <div className="my-4 text-gray-400 text-sm">
                       {isCityDescriptionLoading ? (
                         <Fragment>
                           <div className="flex gap-1">
@@ -404,13 +446,13 @@ export default function TBO() {
                       ) : (
                         <ReadMore text={cityDescription} maxLength={200} />
                       )}
-                    </p>
+                    </div>
                   </div>
                 )}
               </div>
             </div>
             <div className="w-4/6">
-              {country && !city && (
+              {country && !city && !hotel && (
                 <Fragment>
                   {isCitiesLoading && (
                     <div className="mt-10 max-w-7xl mx-auto">
@@ -456,7 +498,7 @@ export default function TBO() {
                 </Fragment>
               )}
 
-              {country && city && (
+              {country && city && !hotel && (
                 <Fragment>
                   {isHotelsLoading && (
                     <div className="mt-10 max-w-7xl mx-auto">
@@ -473,7 +515,7 @@ export default function TBO() {
                               <button
                                 key={index}
                                 className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
-                                onClick={(e) => getHotels(e, hotel)}
+                                onClick={(e) => getHotelDetails(e, hotel)}
                               >
                                 <h6 className="text-center">
                                   {hotel.HotelName}
@@ -491,6 +533,7 @@ export default function TBO() {
                               <button
                                 key={index}
                                 className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
+                                onClick={(e) => getHotelDetails(e, hotel)}
                               >
                                 <h6 className="text-center">
                                   {hotel.HotelName}
@@ -500,6 +543,82 @@ export default function TBO() {
                           })}
                         </Fragment>
                       )}
+                    </div>
+                  )}
+                </Fragment>
+              )}
+              {country && city && hotel && (
+                <Fragment>
+                  {isHotelDetailsLoading && (
+                    <div className="mt-10 max-w-7xl mx-auto">
+                      <h6 className="text-center">Loading Hotel Details...</h6>
+                    </div>
+                  )}
+
+                  {!isHotelDetailsLoading && (
+                    <div className="mb-10">
+                      <p className="text-gray-500">Hotel Details</p>
+                      <div className="flex">
+                        <div className="w-9/12">
+                          <h6 className="text-2xl font-bold">
+                            {hotelDetails[0].HotelName}
+                          </h6>
+                          <p className="mt-4 text-base text-gray-500">
+                            {hotelDetails[0].Description}
+                          </p>
+
+                          <div className="my-4 grid grid-cols-4 gap-2">
+                            {hotelDetails[0].Images.map((image, index) => {
+                              return (
+                                <img
+                                  key={index}
+                                  src={image}
+                                  className="rounded-lg"
+                                />
+                              );
+                            })}
+                          </div>
+
+                          {hotelDetails[0].HotelFacilities && (
+                            <Fragment>
+                              <h6 className="my-4 text-lg">Facilities</h6>
+                              <div className="text-sm grid grid-cols-5 items-start gap-2">
+                                {hotelDetails[0].HotelFacilities.map(
+                                  (facilities, index) => {
+                                    return (
+                                      <span
+                                        key={index}
+                                        className="bg-gray-50 border px-2 py-2 rounded"
+                                      >
+                                        {facilities}
+                                      </span>
+                                    );
+                                  }
+                                )}
+                              </div>
+                            </Fragment>
+                          )}
+                          {hotelDetails[0].Attractions && (
+                            <Fragment>
+                              <h6 className="text-lg">Attractions</h6>
+                              <p>{hotelDetails[0].Attractions}</p>
+                            </Fragment>
+                          )}
+                          <div className="mt-4 max-w-xl flex text-gray-400 gap-x-2">
+                            <div>
+                              <i className="fa-solid fa-location-dot fa-fw"></i>
+                            </div>
+                            <div>
+                              <p>{hotelDetails[0].Address}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="w-3/12">
+                          <button className="w-full py-3 px-4 font-semibold text-white bg-blue-500 hover:bg-blue-600 rounded">
+                            BOOK NOW
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   )}
                 </Fragment>
