@@ -82,14 +82,14 @@ export default function HomePlanTrip() {
 
       setTimeout(() => {
         setIsLoading(false);
-      }, 1000);
+      }, 4000);
     }
   };
 
   const printAsPDF = () => {
-    console.log("HTML Body:", htmlBody.current.id);
+    // printJS(htmlBody.current.id, "html");
 
-    printJS(htmlBody.current.id, "html");
+    printJS({printable: htmlBody.current.id, type: "html", ignoreElements: ['image-carousel']});
   };
 
   return (
@@ -235,7 +235,8 @@ export default function HomePlanTrip() {
                             <div className="logos">
                               <div
                                 key={index}
-                                className="flex my-4 logos-slide logos-animate-left gap-x-4"
+                                id="image-carousel"
+                                className="print:hidden image-carousel flex my-4 logos-slide logos-animate-left gap-x-4"
                               >
                                 {destinationsImages[index].photos.map(
                                   (photo, photoIndex) => {
@@ -296,7 +297,7 @@ export default function HomePlanTrip() {
                                         </p>
                                       </div>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="mt-4 mb-6 flex gap-10">
                                       <div className="w-1/2">
                                         <p className="font-semibold text-lg">
                                           Evening

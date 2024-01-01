@@ -5,6 +5,7 @@ export default {
     extend: {
       screens: {
         print: { raw: "print" },
+        screen: { raw: "screen" },
       },
     },
   },
