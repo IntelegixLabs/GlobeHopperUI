@@ -153,6 +153,12 @@ export default function Home() {
                 about us
               </Link>
               <Link
+                to="/tbo"
+                className="text-base text-white/60 hover:text-white hover:underline rounded"
+              >
+                TBO
+              </Link>
+              <Link
                 to="/destination-search"
                 className="text-base text-white/80 hover:text-white hover:underline rounded"
               >
@@ -280,6 +286,12 @@ export default function Home() {
                 className="text-base text-white/60 hover:text-white hover:underline rounded"
               >
                 about us
+              </Link>
+              <Link
+                to="/tbo"
+                className="text-base text-white/60 hover:text-white hover:underline rounded"
+              >
+                TBO
               </Link>
               <Link
                 to="/destination-search"
