@@ -13,6 +13,7 @@ import {
 import { Api } from "@api/Api.js";
 import { ApiTBO } from "@api/ApiTBO.js";
 import { debounce } from "lodash";
+import ReadMore from "../components/ReadMore.jsx";
 
 export default function TBO() {
   const navigate = useNavigate();
@@ -26,6 +27,14 @@ export default function TBO() {
   const [isCountriesLoading, setIsCountriesLoading] = useState(true);
   const [isCitiesLoading, setIsCitiesLoading] = useState(true);
   const [isHotelsLoading, setIsHotelsLoading] = useState(true);
+
+  // Descriptions
+  const [countryDescription, setCountryDescription] = useState("");
+  const [cityDescription, setCityDescription] = useState("");
+  const [isCountryDescriptionLoading, setIsCountryDescriptionLoading] =
+    useState(true);
+  const [isCityDescriptionLoading, setIsCityDescriptionLoading] =
+    useState(true);
 
   // City Search vars
   const [searchCityName, setSearchCityName] = useState("");
@@ -59,6 +68,7 @@ export default function TBO() {
   };
 
   const getCities = async (event, country) => {
+    setIsCountryDescriptionLoading(true);
     setCountry(country);
     setIsCitiesLoading(true);
 
@@ -81,6 +91,11 @@ export default function TBO() {
           console.log(error);
           setIsCitiesLoading(false);
         });
+
+      await Api.get(`/country-info/${country.Name}`).then((res) => {
+        setCountryDescription(res.data.country_summary);
+        setIsCountryDescriptionLoading(false);
+      });
     }
   };
 
@@ -101,6 +116,7 @@ export default function TBO() {
   }, 2000);
 
   const getHotels = async (event, city) => {
+    setIsCityDescriptionLoading(true);
     setCity(city);
     setIsHotelsLoading(true);
 
@@ -126,6 +142,11 @@ export default function TBO() {
           console.log(error);
           setIsHotelsLoading(false);
         });
+
+      await Api.get(`/country-info/${city.Name}`).then((res) => {
+        setCityDescription(res.data.country_summary);
+        setIsCityDescriptionLoading(false);
+      });
     }
   };
 
@@ -146,7 +167,6 @@ export default function TBO() {
   }, 2000);
 
   const resetToStep = (stepNo) => {
-
     if (stepNo === 0) {
       setCity(null);
       setCountry(null);
@@ -191,7 +211,9 @@ export default function TBO() {
                         className="p-4 bg-white/40 hover:scale-110 backdrop-blur-sm border rounded-md duration-100"
                         onClick={(event) => getCities(event, country)}
                       >
-                        <img src={`country_flags/${country.Code.toLowerCase()}.svg`} />
+                        <img
+                          src={`country_flags/${country.Code.toLowerCase()}.svg`}
+                        />
                         <h6 className="mt-2 text-center">{country.Name}</h6>
                       </button>
                     );
@@ -289,12 +311,6 @@ export default function TBO() {
                 </div>
               </li>
             </ol>
-            {/* <button
-              className="no-underline hover:underline"
-              onClick={() => setCountry(null)}
-            >
-              <i className="fa-solid fa-arrow-left fa-fw"></i> back to countries
-            </button> */}
 
             {country && !city && (
               <div className="px-1 py-1 border flex items-center justify-between rounded-full">
@@ -327,20 +343,39 @@ export default function TBO() {
             )}
           </div>
           <div className="mt-4 flex gap-4">
-            <div className="w-2/6">
-              <div className="sticky top-10 border-r">
+            <div className="w-2/6 overflow-hidden overflow-y-auto">
+              <div className="border-r">
                 <div className="mr-4 p-4 border rounded-md">
                   <h6 className="text-gray-400 text-sm">Country</h6>
-                  <h6 className="mt-1 font-semibold text-xl">{country.Name}</h6>
+                  <div className="flex items-center justify-between">
+                    <h6 className="font-semibold text-xl">{country.Name}</h6>
+                    <img
+                      className="w-12 h-8"
+                      src={`country_flags/${country.Code.toLowerCase()}.svg`}
+                      alt="country_flag"
+                    />
+                  </div>
                   <p className="my-4 text-gray-400 text-sm">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                    ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit
-                    esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-                    occaecat cupidatat non proident, sunt in culpa qui officia
-                    deserunt mollit anim id est laborum.
+                    {isCountryDescriptionLoading ? (
+                      <Fragment>
+                        <div className="flex gap-1">
+                          <div className="h-2 w-2/5 shimmer"></div>
+                          <div className="h-2 w-1/5 shimmer"></div>
+                          <div className="h-2 w-2/5 shimmer"></div>
+                        </div>
+                        <div className="mt-2 flex gap-1">
+                          <div className="h-2 w-3/6 shimmer"></div>
+                          <div className="h-2 w-2/6 shimmer"></div>
+                        </div>
+                        <div className="mt-2 flex gap-1">
+                          <div className="h-2 w-2/5 shimmer"></div>
+                          <div className="h-2 w-1/5 shimmer"></div>
+                          <div className="h-2 w-2/5 shimmer"></div>
+                        </div>
+                      </Fragment>
+                    ) : (
+                      <ReadMore text={countryDescription} maxLength={200} />
+                    )}
                   </p>
                 </div>
 
@@ -349,14 +384,26 @@ export default function TBO() {
                     <h6 className="text-gray-400 text-sm">City</h6>
                     <h6 className="mt-1 font-semibold text-xl">{city.Name}</h6>
                     <p className="my-4 text-gray-400 text-sm">
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-                      ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                      Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                      sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim id est laborum.
+                      {isCityDescriptionLoading ? (
+                        <Fragment>
+                          <div className="flex gap-1">
+                            <div className="h-2 w-2/5 shimmer"></div>
+                            <div className="h-2 w-1/5 shimmer"></div>
+                            <div className="h-2 w-2/5 shimmer"></div>
+                          </div>
+                          <div className="mt-2 flex gap-1">
+                            <div className="h-2 w-3/6 shimmer"></div>
+                            <div className="h-2 w-2/6 shimmer"></div>
+                          </div>
+                          <div className="mt-2 flex gap-1">
+                            <div className="h-2 w-2/5 shimmer"></div>
+                            <div className="h-2 w-1/5 shimmer"></div>
+                            <div className="h-2 w-2/5 shimmer"></div>
+                          </div>
+                        </Fragment>
+                      ) : (
+                        <ReadMore text={cityDescription} maxLength={200} />
+                      )}
                     </p>
                   </div>
                 )}
@@ -396,6 +443,7 @@ export default function TBO() {
                               <button
                                 key={index}
                                 className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
+                                onClick={(e) => getHotels(e, city)}
                               >
                                 <h6 className="text-center">{city.Name}</h6>
                               </button>
