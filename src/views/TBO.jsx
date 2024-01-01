@@ -47,7 +47,7 @@ export default function TBO() {
     } else {
       await ApiTBO.get("/CountryList")
         .then((response) => {
-          setCountries(response.data.data.CountryList);
+          setCountries(response.data.CountryList);
           setIsCountriesLoading(false);
         })
         .catch((error) => {
@@ -73,7 +73,7 @@ export default function TBO() {
 
       await ApiTBO.post("/CityList", payload)
         .then((response) => {
-          setCities(response.data.data.CityList);
+          setCities(response.data.CityList);
           setIsCitiesLoading(false);
         })
         .catch((error) => {
@@ -118,7 +118,7 @@ export default function TBO() {
 
       await ApiTBO.post("/TBOHotelCodeList", payload)
         .then((response) => {
-          setHotels(response.data.data.Hotels);
+          setHotels(response.data.Hotels);
           setIsHotelsLoading(false);
         })
         .catch((error) => {
