@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
 
 import { cohereResponse } from "../samples/sampleData.js";
+
 import {
   TBOSampleCountryList,
   TBOSampleCityList,
@@ -36,7 +37,7 @@ export default function TBO() {
 
   useEffect(() => {
     getCountries();
-  });
+  }, []);
 
   const getCountries = async () => {
     if (import.meta.env.VITE_APP_ENVIRONMENT !== "production") {
@@ -164,6 +165,9 @@ export default function TBO() {
 
   return (
     <Fragment>
+      <h1 className="mt-4 font-bold text-5xl text-center">
+        {import.meta.env.VITE_APP_NAME}
+      </h1>
       <p className="mt-2 font-light text-center text-base">
         Your personal AI globe guide
       </p>
@@ -184,14 +188,21 @@ export default function TBO() {
                     return (
                       <button
                         key={index}
-                        className="p-4 bg-white/40 backdrop-blur-sm border rounded-md"
+                        className="p-4 bg-white/40 hover:scale-110 backdrop-blur-sm border rounded-md duration-100"
                         onClick={(event) => getCities(event, country)}
                       >
-                        <h6 className="text-center">{country.Name}</h6>
+                        <img src={`country_flags/${country.Code.toLowerCase()}.svg`} />
+                        <h6 className="mt-2 text-center">{country.Name}</h6>
                       </button>
                     );
                   })}
                 </Fragment>
+              )}
+              {!countries.length && (
+                <div className="mt-10 max-w-7xl mx-auto">
+                  <h6 className="text-center">No Countries Available</h6>
+                  <p className="It seems like you are facing a network issues or the countries are not available."></p>
+                </div>
               )}
             </div>
           )}
@@ -250,7 +261,7 @@ export default function TBO() {
                 </span>
                 <div className="flex flex-col text-sm">
                   <h6>Select City</h6>
-                  <h6>{city ? city.Name:''}</h6>
+                  <h6>{city ? city.Name : ""}</h6>
                 </div>
                 <svg
                   className="w-3 h-3 ms-2 sm:ms-4 rtl:rotate-180"
