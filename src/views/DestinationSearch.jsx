@@ -100,6 +100,12 @@ export default function DestinationSearch() {
           home
         </Link>
         <Link
+          to="/tbo"
+          className="text-base text-white/80 hover:text-white hover:underline rounded"
+        >
+          TBO
+        </Link>
+        <Link
           to="/about"
           className="text-base text-white/80 hover:text-white hover:underline rounded"
         >
