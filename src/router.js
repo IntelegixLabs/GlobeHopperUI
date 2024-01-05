@@ -41,7 +41,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: "/destination-search",
-            name: "Home",
+            name: "DestinationSearch",
             element: <DestinationSearch />,
           },
           {
