@@ -94,7 +94,7 @@ export default function HomePlanTrip() {
             </Link>
             <Link
               to="/tbo"
-              className="text-base text-white/60 hover:text-white hover:underline rounded"
+              className="text-base text-gray/60 hover:text-white hover:underline rounded"
             >
               TBO
             </Link>
