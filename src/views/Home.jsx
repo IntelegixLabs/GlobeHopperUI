@@ -221,7 +221,7 @@ export default function Home() {
                     <button
                       className="pt-1 pb-0.5 px-2 bg-white/20 hover:bg-white/40 rounded-full"
                       onClick={() => {
-                        setUserDestinationQuery(null);
+                        setUserDestinationQuery('');
                         setViewStep(0);
                       }}
                     >

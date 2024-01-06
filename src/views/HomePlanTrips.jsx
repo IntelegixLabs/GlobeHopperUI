@@ -1,10 +1,6 @@
 import { Fragment, useContext, useEffect, useRef, useState } from "react";
 import { TripDetailsContext } from "@contexts/TripDetailsContext.js";
-import {
-  cohereResponseItineraryImages,
-  cohereResponseItinerary,
-  cohereResponseWeather,
-} from "../samples/sampleData.js";
+import { cohereResponseItineraryDetails } from "../samples/sampleData.js";
 import { Link } from "react-router-dom";
 import { Api } from "@api/Api.js";
 import printJS from "print-js";
@@ -22,13 +18,10 @@ import HOTEL from "@assets/convenience/hotel-room-1.jpg";
 import FLIGHT from "@assets/convenience/flight-1.jpg";
 
 export default function HomePlanTrip() {
-  const { userSelectedDestinations, setUserSelectedDestinations } =
-    useContext(TripDetailsContext);
+  const { userSelectedDestinations } = useContext(TripDetailsContext);
 
-  const [destinationsImages, setDestinationsImages] = useState([]);
-  const [destinationsDetails, setDestinationsDetails] = useState([]);
-  const [destinationWeather, setDestinationWeather] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [itineraryDetail, setItineraryDetails] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const htmlBody = useRef(null);
 
@@ -36,47 +29,29 @@ export default function HomePlanTrip() {
     initLoad();
   }, []);
 
-  const initLoad = () => {
-    setIsLoading(true);
-
+  const initLoad = async () => {
     if (import.meta.env.VITE_APP_ENVIRONMENT === "production") {
-      for (let i = 0; i < userSelectedDestinations.length; i++) {
-        const payload = {
-          parameters: {
-            destination: userSelectedDestinations[i],
-          },
-        };
+      console.log(userSelectedDestinations);
+      console.log("is Loading:", isLoading);
 
-        const imagePayload = {
-          parameters: {
-            location: userSelectedDestinations[i],
-            query_count: "10",
-          },
-        };
+      const payload = {
+        data: {
+          cities: userSelectedDestinations,
+          photo_count: 10,
+        },
+      };
 
-        Api.post("/travel_planner", payload)
-          .then((res) => {
-            setDestinationsDetails([...destinationsDetails, res.data]);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-
-        Api.post("/images", imagePayload)
-          .then((res) => {
-            setDestinationsImages([...destinationsImages, res.data]);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      }
+      await Api.post("/travel_planner", payload)
+        .then((res) => {
+          setItineraryDetails(res.data.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
       setIsLoading(false);
     } else {
-      setDestinationsDetails(cohereResponseItinerary);
-      setDestinationsImages(cohereResponseItineraryImages);
-      setDestinationWeather(cohereResponseWeather);
-
+      setItineraryDetails(cohereResponseItineraryDetails.data);
       setTimeout(() => {
         setIsLoading(false);
       }, 1000);
@@ -119,7 +94,7 @@ export default function HomePlanTrip() {
             </Link>
             <Link
               to="/tbo"
-              className="text-base text-white/60 hover:text-white hover:underline rounded"
+              className="text-base text-gray/60 hover:text-white hover:underline rounded"
             >
               TBO
             </Link>
@@ -148,6 +123,7 @@ export default function HomePlanTrip() {
             based on your selected cities
           </p>
         </div>
+
         {!isLoading && (
           <button
             className="px-4 py-3 font-semibold bg-orange-600 hover:bg-orange-700 text-white rounded-md"
@@ -159,68 +135,66 @@ export default function HomePlanTrip() {
         )}
       </div>
 
-      {!isLoading && (
-        <div className="w-full z-10 sticky top-0 py-6 border-y bg-white/80 shadow backdrop-blur-sm flex justify-center gap-x-4">
-          {userSelectedDestinations.map((destination, index) => {
-            return (
-              <a
-                key={index}
-                href={`#${destination}`}
-                className="hover:underline"
-              >
-                {destination}
-              </a>
-            );
-          })}
-        </div>
-      )}
       {isLoading && (
         <div className="my-10 2xl:px-20">
           <h1>Loading Itineraries...</h1>
         </div>
       )}
+
+      {!isLoading && (
+        <div className="w-full z-10 sticky top-0 py-6 border-y bg-white/80 shadow backdrop-blur-sm flex justify-center gap-x-4">
+          {itineraryDetail.length > 0 && (
+            <Fragment>
+              {itineraryDetail.map((destination, index) => {
+                return (
+                  <a
+                    key={index}
+                    href={`#${destination.name}`}
+                    className="hover:underline"
+                  >
+                    {destination.name}
+                  </a>
+                );
+              })}
+            </Fragment>
+          )}
+        </div>
+      )}
+
       {!isLoading && (
         <div
           ref={htmlBody}
           id="displayBody"
           className="my-10 2xl:px-20 space-y-10"
         >
-          {destinationsDetails.length > 0 && (
+          {itineraryDetail.length > 0 && (
             <Fragment>
-              {destinationsDetails.map((destinationDetails, index) => {
+              {itineraryDetail.map((itineraryDetail, index) => {
                 return (
                   <Fragment key={index}>
-                    <div id={userSelectedDestinations[index]} className="pt-16">
+                    <div id={itineraryDetail.name} className="pt-16">
                       <div className="p-4 flex border rounded gap-4">
                         <div className="w-3/12">
                           <div className="grid grid-cols-1 gap-4">
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[0].src.medium
-                              }
-                              alt={destinationsImages[index].photos[0].alt}
+                              src={itineraryDetail.images.photos[0].src.medium}
+                              alt={itineraryDetail.images.photos[0].alt}
                             />
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[1].src.medium
-                              }
-                              alt={destinationsImages[index].photos[1].alt}
+                              src={itineraryDetail.images.photos[1].src.medium}
+                              alt={itineraryDetail.images.photos[1].alt}
                             />
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[2].src.medium
-                              }
-                              alt={destinationsImages[index].photos[2].alt}
+                              src={itineraryDetail.images.photos[2].src.medium}
+                              alt={itineraryDetail.images.photos[2].alt}
                             />
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[3].src.medium
-                              }
-                              alt={destinationsImages[index].photos[3].alt}
+                              src={itineraryDetail.images.photos[3].src.medium}
+                              alt={itineraryDetail.images.photos[3].alt}
                             />
                           </div>
                         </div>
@@ -228,7 +202,7 @@ export default function HomePlanTrip() {
                           <div key={index} className="mx-10">
                             <div className="flex justify-between">
                               <h1 className="text-center font-bold text-4xl">
-                                {userSelectedDestinations[index]}
+                                {itineraryDetail.name}
                               </h1>
                               <div className="flex items-start gap-x-3 text-blue-600">
                                 <div>
@@ -237,14 +211,14 @@ export default function HomePlanTrip() {
                                 <div>
                                   <h6>
                                     {
-                                      destinationWeather[index]
+                                      itineraryDetail.weather
                                         .current_observation.condition
                                         .temperature
                                     }
                                     &deg; F |&nbsp;
                                     {parseFloat(
                                       (
-                                        ((destinationWeather[index]
+                                        ((itineraryDetail.weather
                                           .current_observation.condition
                                           .temperature -
                                           32) *
@@ -256,7 +230,7 @@ export default function HomePlanTrip() {
                                   </h6>
                                   <p>
                                     {
-                                      destinationWeather[index]
+                                      itineraryDetail.weather
                                         .current_observation.condition.text
                                     }
                                   </p>
@@ -268,7 +242,7 @@ export default function HomePlanTrip() {
                                 Introduction
                               </h2>
                               <p className="my-2 text-gray-500">
-                                {destinationDetails.introduction}
+                                {itineraryDetail.travel_details.introduction}
                               </p>
                             </div>
 
@@ -278,7 +252,7 @@ export default function HomePlanTrip() {
                                 id="image-carousel"
                                 className="print:hidden image-carousel flex my-4 logos-slide logos-animate-left gap-x-4"
                               >
-                                {destinationsImages[index].photos.map(
+                                {itineraryDetail.images.photos.map(
                                   (photo, photoIndex) => {
                                     return (
                                       <img
@@ -290,7 +264,7 @@ export default function HomePlanTrip() {
                                     );
                                   }
                                 )}
-                                {destinationsImages[index].photos.map(
+                                {itineraryDetail.images.photos.map(
                                   (photo, photoIndex) => {
                                     return (
                                       <img
@@ -304,7 +278,7 @@ export default function HomePlanTrip() {
                                 )}
                               </div>
                             </div>
-                            {destinationDetails.itinerary.map(
+                            {itineraryDetail.travel_details.itinerary.map(
                               (itinerary, indexItinerary) => {
                                 return (
                                   <Fragment key={indexItinerary}>
@@ -375,7 +349,7 @@ export default function HomePlanTrip() {
                               Weather
                             </h6>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                              {destinationWeather[index].forecasts.map(
+                              {itineraryDetail.weather.forecasts.map(
                                 (forecast, index) => {
                                   return (
                                     <div
@@ -481,31 +455,23 @@ export default function HomePlanTrip() {
                           <div className="grid grid-cols-1 gap-4">
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[4].src.medium
-                              }
-                              alt={destinationsImages[index].photos[4].alt}
+                              src={itineraryDetail.images.photos[4].src.medium}
+                              alt={itineraryDetail.images.photos[4].alt}
                             />
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[5].src.medium
-                              }
-                              alt={destinationsImages[index].photos[5].alt}
+                              src={itineraryDetail.images.photos[5].src.medium}
+                              alt={itineraryDetail.images.photos[5].alt}
                             />
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[6].src.medium
-                              }
-                              alt={destinationsImages[index].photos[6].alt}
+                              src={itineraryDetail.images.photos[6].src.medium}
+                              alt={itineraryDetail.images.photos[6].alt}
                             />
                             <img
                               className="rounded"
-                              src={
-                                destinationsImages[index].photos[7].src.medium
-                              }
-                              alt={destinationsImages[index].photos[7].alt}
+                              src={itineraryDetail.images.photos[7].src.medium}
+                              alt={itineraryDetail.images.photos[7].alt}
                             />
                           </div>
                         </div>
@@ -518,126 +484,6 @@ export default function HomePlanTrip() {
           )}
         </div>
       )}
-      {/* {!isLoading && (
-        <div
-          ref={htmlBody}
-          id="displayBody"
-          className="my-10 2xl:px-20 flex gap-x-10"
-        >
-          <div className="w-1/2 logos">
-            {destinationsImages.length > 0 && (
-              <Fragment>
-                {destinationsImages.map((destinationImages, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className={`flex my-4 logos-slide ${
-                        index % 2 === 0
-                          ? "logos-animate-left"
-                          : "logos-animate-right"
-                      } gap-x-4`}
-                    >
-                      {destinationImages.photos.map((photo, photoIndex) => {
-                        return (
-                          <img
-                            key={photoIndex}
-                            className="w-96 h-80 rounded-xl"
-                            src={photo.src.medium}
-                            alt={photo.alt}
-                          />
-                        );
-                      })}
-                      {destinationImages.photos.map((photo, photoIndex) => {
-                        return (
-                          <img
-                            key={photoIndex}
-                            className="w-96 h-80 rounded-xl"
-                            src={photo.src.medium}
-                            alt={photo.alt}
-                          />
-                        );
-                      })}
-                      {destinationImages.photos.map((photo, photoIndex) => {
-                        return (
-                          <img
-                            key={photoIndex}
-                            className="w-96 h-80 rounded-xl"
-                            src={photo.src.medium}
-                            alt={photo.alt}
-                          />
-                        );
-                      })}
-                      {destinationImages.photos.map((photo, photoIndex) => {
-                        return (
-                          <img
-                            key={photoIndex}
-                            className="w-96 h-80 rounded-xl"
-                            src={photo.src.medium}
-                            alt={photo.alt}
-                          />
-                        );
-                      })}
-                    </div>
-                  );
-                })}
-              </Fragment>
-            )}
-          </div>
-          {destinationsDetails.length > 0 && (
-            <div className="mx-auto w-8/12">
-              <div className="space-y-4">
-                {destinationsDetails.map((destinationDetails, index) => {
-                  return (
-                    <div key={index} className="p-4 border shadow rounded-lg">
-                      <h2 className="font-semibold text-2xl">
-                        {destinationDetails.introduction}
-                      </h2>
-
-                      {destinationDetails.itinerary.map(
-                        (itinerary, indexItinerary) => {
-                          return (
-                            <div
-                              key={indexItinerary}
-                              className="my-4 p-4 flex justify-between border gap-x-4 rounded-lg"
-                            >
-                              <h4 className="w-1/4 text-2xl">
-                                Day {itinerary.Day}
-                              </h4>
-                              <div className="w-3/4">
-                                <p className="font-semibold text-lg">Morning</p>
-                                <p className="mt-1 text-gray-600">
-                                  {itinerary.morning}
-                                </p>
-                                <hr className="my-6 border-gray-200" />
-                                <p className="font-semibold text-lg">
-                                  Afternoon
-                                </p>
-                                <p className="mt-1 text-gray-600">
-                                  {itinerary.morning}
-                                </p>
-                                <hr className="my-6 border-gray-200" />
-                                <p className="font-semibold text-lg">Evening</p>
-                                <p className="mt-1 text-gray-600">
-                                  {itinerary.evening}
-                                </p>
-                                <hr className="my-6 border-gray-200" />
-                                <p className="font-semibold text-lg">Night</p>
-                                <p className="mt-1 text-gray-600">
-                                  {itinerary.night}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </div>
-      )} */}
 
       <div className="my-20 max-w-7xl mx-auto">
         <h4 className="font-bold text-3xl">

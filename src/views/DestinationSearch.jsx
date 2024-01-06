@@ -36,7 +36,7 @@ export default function DestinationSearch() {
 
       do {
         data = {};
-        await Api.post("/travel_planner", payload)
+        await Api.post("/travel_planner_single_destination", payload)
           .then((res) => {
             data = res.data;
             setDestinationDetails(data);
@@ -98,6 +98,12 @@ export default function DestinationSearch() {
           className="text-base text-white/80 hover:text-white hover:underline rounded"
         >
           home
+        </Link>
+        <Link
+          to="/tbo"
+          className="text-base text-white/80 hover:text-white hover:underline rounded"
+        >
+          TBO
         </Link>
         <Link
           to="/about"
